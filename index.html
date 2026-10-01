@@ -7,12 +7,12 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23101C28'/%3E%3Crect x='6' y='14' width='4.5' height='12' rx='1.5' fill='%234DD0E1'/%3E%3Crect x='13.75' y='7' width='4.5' height='19' rx='1.5' fill='%2363D297'/%3E%3Crect x='21.5' y='11' width='4.5' height='15' rx='1.5' fill='%23F7CB4D'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Poppins:wght@500;600;700&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#F2F4F7; --panel:#FFFFFF; --ink:#16212C; --muted:#5E6C7B; --line:#DCE2E9; --soft:#EDF0F4;
-  --brand:#1F5FBF; --brand-ink:#FFFFFF; --sel:rgba(31,95,191,.09);
-  --side:#101C28; --side-ink:#C6D1DC; --side-mute:#7D8D9E; --side-on:rgba(255,255,255,.09);
+  --brand:#316FD4; --brand-ink:#FFFFFF; --sel:rgba(49,111,212,.10);
+  --side:#0B2379; --side2:#0C2684; --side-ink:#D5DDF5; --side-mute:#8EA0D6; --side-on:rgba(255,255,255,.13);
   --pos:#17724A; --neg:#B3261E; --warn:#9A5B00; --warn-bg:#FFF4DF;
   --c-mail:#2F6BDB; --c-ech:#F0A03C; --c-cli:#2AA198; --c-urg:#D9534F;
   --sans:"Schibsted Grotesk",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
@@ -22,14 +22,14 @@
   :root:not([data-theme="light"]){
     --bg:#0B1218; --panel:#131C25; --ink:#E6ECF2; --muted:#93A2B2; --line:#25313D; --soft:#1A2430;
     --brand:#7FB3FF; --brand-ink:#0B1218; --sel:rgba(127,179,255,.12);
-    --side:#0A1017; --pos:#5FD39A; --neg:#FF8A80; --warn:#F2B75B; --warn-bg:#2A2216;
+    --side:#071447; --side2:#0A1B66; --pos:#5FD39A; --neg:#FF8A80; --warn:#F2B75B; --warn-bg:#2A2216;
     --c-mail:#5B92F5; --c-ech:#F2AE55; --c-cli:#4CC2B8; --c-urg:#F27F7A;
   }
 }
 :root[data-theme="dark"]{
   --bg:#0B1218; --panel:#131C25; --ink:#E6ECF2; --muted:#93A2B2; --line:#25313D; --soft:#1A2430;
   --brand:#7FB3FF; --brand-ink:#0B1218; --sel:rgba(127,179,255,.12);
-  --side:#0A1017; --pos:#5FD39A; --neg:#FF8A80; --warn:#F2B75B; --warn-bg:#2A2216;
+  --side:#071447; --side2:#0A1B66; --pos:#5FD39A; --neg:#FF8A80; --warn:#F2B75B; --warn-bg:#2A2216;
   --c-mail:#5B92F5; --c-ech:#F2AE55; --c-cli:#4CC2B8; --c-urg:#F27F7A;
 }
 *{box-sizing:border-box}
@@ -43,14 +43,14 @@ a{color:inherit}
 
 /* ---------- Structure ---------- */
 .app{display:grid;grid-template-columns:256px minmax(0,1fr);min-height:100vh}
-.side{background:var(--side);color:var(--side-ink);padding:calc(20px + env(safe-area-inset-top,0px)) 12px 20px;position:sticky;top:0;height:100vh;overflow:auto}
+.side{background:linear-gradient(180deg,var(--side),var(--side2,var(--side)));color:var(--side-ink);padding:calc(20px + env(safe-area-inset-top,0px)) 12px 20px;position:sticky;top:0;height:100vh;overflow:auto}
 .brand{display:flex;gap:11px;align-items:center;padding:2px 10px 18px;color:#fff;text-decoration:none}
 .brand b{display:block;font-size:16px;line-height:1.15;letter-spacing:-.01em}
 .brand small{color:var(--side-mute);font-size:12.5px}
 .grp{padding:18px 10px 6px;font-size:12.5px;color:var(--side-mute);font-weight:500}
 .nv{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;color:inherit;text-decoration:none;font-weight:500;font-size:14.5px;position:relative}
 .nv:hover{background:rgba(255,255,255,.05)}
-.nv[aria-current="page"]{background:var(--side-on);color:#fff}
+.nv[aria-current="page"]{background:var(--side-on);color:#fff;box-shadow:inset 3px 0 0 #3B86FF}
 .nv svg{flex:none;opacity:.85}
 .nv .pd{width:11px;height:11px;border-radius:50%;background:var(--c);flex:none;box-shadow:0 0 0 2px rgba(255,255,255,.14)}
 .nv .fxm{width:18px;text-align:center;font-family:var(--mono);font-style:italic;font-size:13px;opacity:.85}
@@ -296,7 +296,7 @@ a.btn{text-decoration:none;display:inline-block}
 @media (max-width:760px){.rp2{grid-template-columns:1fr}.rp-head h2{font-size:23px}.rt{min-width:520px}.rtw{overflow-x:auto}}
 @media print{
   @page{size:A4;margin:12mm}
-  html:root:root:root{--bg:#fff;--panel:#fff;--ink:#16212C;--muted:#4C5966;--line:#CBD3DC;--soft:#EDF0F4;--brand:#1F5FBF;--sel:rgba(31,95,191,.09);--c-mail:#2F6BDB;--c-ech:#F0A03C;--c-cli:#2AA198;--c-urg:#D9534F;--pos:#17724A;--neg:#B3261E;--warn:#9A5B00;--warn-bg:#FFF4DF}
+  html:root:root:root{--bg:#fff;--panel:#fff;--ink:#16212C;--muted:#4C5966;--line:#CBD3DC;--soft:#EDF0F4;--brand:#316FD4;--sel:rgba(49,111,212,.10);--c-mail:#2F6BDB;--c-ech:#F0A03C;--c-cli:#2AA198;--c-urg:#D9534F;--pos:#17724A;--neg:#B3261E;--warn:#9A5B00;--warn-bg:#FFF4DF}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   body{background:#fff;font-size:12.5px}
   .side,.noprint,.toast,.tip,dialog,.mp,.btn,.ctrl,.ih,.infopop,.qs,.present-exit{display:none!important}
@@ -329,7 +329,7 @@ a.btn{text-decoration:none;display:inline-block}
 .qs{position:relative;margin:0 0 14px}
 .qs input{width:100%;height:36px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.07);border-radius:9px;padding:0 12px;color:#fff;font-size:14px}
 .qs input::placeholder{color:var(--side-mute)}
-.qs input:focus{outline:2px solid #7FB3FF;outline-offset:1px;background:rgba(255,255,255,.12)}
+.qs input:focus{outline:2px solid #3B86FF;outline-offset:1px;background:rgba(255,255,255,.12)}
 .qsList{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:10px;box-shadow:0 12px 32px rgba(0,0,0,.3);z-index:45;max-height:min(60vh,420px);overflow:auto;padding:6px}
 .qsItem{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:none;padding:8px 10px;border-radius:8px}
 .qsItem:hover,.qsItem:focus-visible{background:var(--soft)}
@@ -460,6 +460,33 @@ table.rt.cmp td.gn{color:var(--neg)}
 .bl-t small{color:var(--muted);font-weight:500}
 .mprod small.n1{margin-top:1px}
 @media (max-width:900px){.yr{margin-bottom:8px}}
+/* ---------- Charte graphique des documents ---------- */
+.bilan{--brand:#316FD4;--navy:#0B2379}
+.bilan h2,.bilan .bl-h,.bilan .bl-btitle,.bilan .bl-card .v{font-family:"Poppins",var(--sans)}
+.bl-page{--pt:34px;--px:40px}
+.bl-brand{display:flex;justify-content:space-between;align-items:center;gap:16px;margin:calc(-1 * var(--pt)) calc(-1 * var(--px)) 20px;padding:16px var(--px);background:linear-gradient(100deg,#0B2379,#0C2684);border-bottom:3px solid #3B86FF;border-radius:12px 12px 0 0;color:#fff}
+.bl-logo{height:30px;width:auto;display:block}
+.bl-btitle{font-weight:600;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#fff;text-align:right}
+.bl-card{border-top:3px solid var(--brand)}
+@media (max-width:640px){.bl-page{--pt:22px;--px:16px}.bl-logo{height:24px}.bl-btitle{font-size:10.5px}}
+@media print{
+  .bl-page{--pt:13mm;--px:15mm}
+  .bl-brand{margin-bottom:8mm;padding:5.5mm var(--px);border-radius:0}
+  .bl-logo{height:9mm}
+  .bl-btitle{font-size:9.5pt}
+  .bilan .bl-h{color:var(--navy)}
+  .bl-t thead th{border-bottom-color:var(--navy)}
+}
+/* ---------- Charte graphique : application ---------- */
+h1,h2,h3,.kv,.btn,.nv,.brand b,.seg button{font-family:"Poppins",var(--sans)}
+.brand-logo{flex-direction:column;align-items:flex-start;gap:6px;padding-bottom:16px}
+.brand-logo img{height:32px;width:auto;max-width:100%;display:block}
+.brand-logo small{color:var(--side-mute);font-size:12px;letter-spacing:.04em}
+.btn{font-size:13.5px}
+.btn.pri{box-shadow:0 1px 0 rgba(11,35,121,.25)}
+.kpi .kv{font-size:28px}
+.ph h1{font-weight:600}
+@media (max-width:900px){.brand-logo{flex-direction:row;align-items:center;gap:12px;padding-bottom:10px}.brand-logo img{height:26px}}
 </style>
 </head>
 <body>
@@ -473,6 +500,7 @@ table.rt.cmp td.gn{color:var(--neg)}
 <div class="tip" id="tip" role="tooltip" hidden></div>
 <div class="toast" id="toast" role="status" hidden></div>
 <input type="file" id="importFile" accept="application/json,.json" hidden>
+<input type="file" id="logoFile" accept="image/*" hidden>
 
 <script type="application/json" id="data">{"sheets":[{"name":"Anais","hidden":false,"rows":14,"cols":11,"merges":[],"cells":{}},{"name":"Charlotte","hidden":false,"rows":14,"cols":11,"merges":[],"cells":{}},{"name":"Clara","hidden":false,"rows":14,"cols":11,"merges":[],"cells":{}},{"name":"Léa","hidden":true,"rows":14,"cols":8,"merges":[],"cells":{}},{"name":"Ben","hidden":false,"rows":14,"cols":11,"merges":[],"cells":{}},{"name":"Régis","hidden":false,"rows":14,"cols":11,"merges":[],"cells":{}},{"name":"Pierrick","hidden":false,"rows":14,"cols":11,"merges":[],"cells":{}},{"name":"Virginie","hidden":true,"rows":14,"cols":8,"merges":[],"cells":{}}]}</script>
 <script>
@@ -773,9 +801,10 @@ const teamNotes = () => (S.year === BASE_YEAR ? TEAM_NOTES_BASE : []);
 /* ---------- État de l'application ---------- */
 const KEY = "productivite-easy:v2", LEGACY_KEY = "productivite-easy-26:v1";
 const BASE_YEAR = 2026; /* année du fichier Excel d'origine */
+const DEFAULT_LOGO = "";
 const TOTAL_SHEET = book.sheets.Total;
 const clone = (o) => JSON.parse(JSON.stringify(o));
-const S = { month:0, year:BASE_YEAR, coef:{}, notes:{}, incl:{}, bilan:{}, theme:"auto", lineOff:{}, pdMonth:null, fx:{ p:"Anais", m:0 }, cmp:{}, goal:{}, proj:{ base:"ytd" }, refRules:{} };
+const S = { month:0, year:BASE_YEAR, coef:{}, notes:{}, incl:{}, bilan:{}, theme:"auto", lineOff:{}, pdMonth:null, fx:{ p:"Anais", m:0 }, cmp:{}, goal:{}, proj:{ base:"ytd" }, refRules:{}, logo:DEFAULT_LOGO };
 const YEARS = {};
 let prevCache = {};
 let curMonth = -1;
@@ -839,7 +868,7 @@ function activate(y) {
   book.astCache.clear(); book.valCache.clear(); prevCache = {}; curMonth = calcCurMonth(y);
 }
 const yearsList = () => Object.keys(YEARS).map(Number).sort((a, b) => a - b);
-function payload() { stash(); return { v:2, year:S.year, years:YEARS, goal:S.goal, theme:S.theme, refRules:Object.fromEntries(yearsList().map((y) => [y, refFrom(y)])) }; }
+function payload() { stash(); return { v:2, year:S.year, years:YEARS, goal:S.goal, theme:S.theme, refRules:Object.fromEntries(yearsList().map((y) => [y, refFrom(y)])), logo:S.logo }; }
 function applyPayload(j) {
   if (!j || (j.v !== 1 && j.v !== 2)) throw new Error("Fichier non reconnu");
   Object.keys(YEARS).forEach((k) => delete YEARS[k]);
@@ -853,6 +882,7 @@ function applyPayload(j) {
     S.refRules = j.refRules && typeof j.refRules === "object" ? j.refRules : {};
   }
   if (j.theme) S.theme = j.theme;
+  if (typeof j.logo === "string") S.logo = j.logo;
   S.cmp = {};
   activate(j.v === 2 && YEARS[j.year] ? j.year : BASE_YEAR);
 }
@@ -935,8 +965,8 @@ function inkFor(hex) {
 const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
 const nfs = {};
 const nf = (d) => nfs[d] || (nfs[d] = new Intl.NumberFormat("fr-FR", { minimumFractionDigits:d, maximumFractionDigits:d }));
-const fmt = (v, d = 0) => (v === null || v === undefined || Number.isNaN(v) ? "—" : nf(d).format(v));
-const fmtG = (v) => (v === null || v === undefined ? "—" : new Intl.NumberFormat("fr-FR", { maximumFractionDigits:2 }).format(v));
+const fmt = (v, d = 0) => (v === null || v === undefined || Number.isNaN(v) ? "—" : nf(d).format(v).replace(/\u202f/g, "\u00a0"));
+const fmtG = (v) => (v === null || v === undefined ? "—" : new Intl.NumberFormat("fr-FR", { maximumFractionDigits:2 }).format(v).replace(/\u202f/g, "\u00a0"));
 const $ = (s, r) => (r || document).querySelector(s);
 const parseNum = (s) => { const t = String(s).replace(/\s/g, "").replace(",", "."); if (t === "") return undefined; const n = Number(t); return Number.isNaN(n) ? null : n; };
 function deltaTxt(cur, prev, label) {
@@ -1152,11 +1182,15 @@ function bindSearch() {
   });
   document.addEventListener("click", (e) => { if (!e.target.closest(".qs")) qsHide(); });
 }
+function brandHtml() {
+  if (S.logo) return "<a class=\"brand brand-logo\" href=\"#/\"><img src=\"" + attr(S.logo) + "\" alt=\"Logo\"><small>Productivité · EASY " + String(S.year).slice(2) + "</small></a>";
+  return "<a class=\"brand\" href=\"#/\"><svg width=\"32\" height=\"32\" viewBox=\"0 0 32 32\" aria-hidden=\"true\"><rect width=\"32\" height=\"32\" rx=\"8\" fill=\"#1B2B3B\"/><rect x=\"6\" y=\"14\" width=\"4.5\" height=\"12\" rx=\"1.5\" fill=\"#4DD0E1\"/><rect x=\"13.75\" y=\"7\" width=\"4.5\" height=\"19\" rx=\"1.5\" fill=\"#63D297\"/><rect x=\"21.5\" y=\"11\" width=\"4.5\" height=\"15\" rx=\"1.5\" fill=\"#F7CB4D\"/></svg><span><b>Productivité</b><small>EASY " + String(S.year).slice(2) + "</small></span></a>";
+}
 function renderSide(r) {
   const cur = (n) => (r.name === n ? " aria-current=\"page\"" : "");
   const person = (p) => "<a class=\"nv\" href=\"" + pHref(p.id) + "\"" + ((r.name === "personne" || r.name === "bilan") && r.id === p.id ? " aria-current=\"page\"" : "") + "><i class=\"pd\" style=\"--c:" + p.color + "\"></i>" + esc(p.id) + "</a>";
   $("#side").innerHTML =
-    "<a class=\"brand\" href=\"#/\"><svg width=\"32\" height=\"32\" viewBox=\"0 0 32 32\" aria-hidden=\"true\"><rect width=\"32\" height=\"32\" rx=\"8\" fill=\"#1B2B3B\"/><rect x=\"6\" y=\"14\" width=\"4.5\" height=\"12\" rx=\"1.5\" fill=\"#4DD0E1\"/><rect x=\"13.75\" y=\"7\" width=\"4.5\" height=\"19\" rx=\"1.5\" fill=\"#63D297\"/><rect x=\"21.5\" y=\"11\" width=\"4.5\" height=\"15\" rx=\"1.5\" fill=\"#F7CB4D\"/></svg><span><b>Productivité</b><small>EASY " + String(S.year).slice(2) + "</small></span></a>" +
+    brandHtml() +
     "<div class=\"yr\"><label class=\"sr\" for=\"yearSel\">Année</label><select id=\"yearSel\" data-bind=\"year\">" + yearsList().map((y) => "<option value=\"" + y + "\"" + (y === S.year ? " selected" : "") + ">Année " + y + "</option>").join("") + "</select></div>" +
     "<nav class=\"navs\" aria-label=\"Navigation principale\">" +
     "<a class=\"nv\" href=\"#/\"" + cur("dashboard") + ">" + ICON.dash + "Tableau de bord</a>" +
@@ -1396,7 +1430,7 @@ function cmpDoc(p, c, ins, opt) {
   const maj = Array.from(new Set(d.filter((r) => r.x.coef !== 1).map((r) => "×" + fmtG(r.x.coef))));
   const rem = d.filter((r) => S.notes[p.id][r.m]).map((r) => `<li><b>${MONTHS[r.m]}</b> : ${esc(S.notes[p.id][r.m])}</li>`);
   return `<article class="bilan cmpdoc"><section class="bl-page">
-    <header class="bl-head"><div><div class="bl-kicker">Comparaison de mois · ${S.year}</div><h2>${esc(p.id)}</h2></div>
+    ${brandBar(`Comparaison de mois · ${S.year}`)}<header class="bl-head"><div><h2>${esc(p.id)}</h2></div>
       <dl class="bl-meta"><div><dt>Mois comparés</dt><dd>${esc(d.length > 4 ? `${d.length} mois, de ${MONTHS[d[0].m].toLowerCase()} à ${MONTHS[d[d.length - 1].m].toLowerCase()}` : d.map((r) => MONTHS[r.m]).join(", "))}</dd></div><div><dt>Édité le</dt><dd>${esc(date)}</dd></div></dl></header>
     <p class="bl-syn">${esc(ins.syn)}</p>
     <h3 class="bl-h">Volume et productivité</h3>
@@ -1667,7 +1701,7 @@ function viewBilan(id) {
   </section>
   <article class="bilan">
     <section class="bl-page">
-      <header class="bl-head"><div><div class="bl-kicker">Bilan annuel · ${S.year}</div><h2>${esc(id)}</h2></div>
+      ${brandBar(`Bilan annuel · ${S.year}`)}<header class="bl-head"><div><h2>${esc(id)}</h2></div>
         <dl class="bl-meta"><div><dt>Période</dt><dd>${esc(period)}</dd></div><div><dt>Manager</dt><dd>${esc(B.manager || "—")}</dd></div><div><dt>Édité le</dt><dd>${esc(date)}</dd></div></dl></header>
       <p class="bl-syn">${syn}</p>
       <h3 class="bl-h">Chiffres clés</h3>
@@ -1682,7 +1716,7 @@ function viewBilan(id) {
       ${foot1(1)}
     </section>
     <section class="bl-page">
-      <header class="bl-head bl-head2"><div><div class="bl-kicker">Entretien annuel · ${S.year}</div><h2>${esc(id)}</h2></div>
+      ${brandBar(`Entretien annuel · ${S.year}`)}<header class="bl-head bl-head2"><div><h2>${esc(id)}</h2></div>
         <dl class="bl-meta"><div><dt>Période</dt><dd>${esc(period)}</dd></div><div><dt>Manager</dt><dd>${esc(B.manager || "—")}</dd></div></dl></header>
       ${ent("bilan", "Bilan de l'année", "Faits marquants, contexte, ce qui a changé sur la période.", 32)}
       <div class="bl-2" style="margin-top:12px">${ent("forts", "Points forts", "Réussites, compétences, contributions à valoriser.", 42)}${ent("progres", "Axes de progrès", "Points à travailler, difficultés rencontrées.", 42)}</div>
@@ -1701,6 +1735,9 @@ function viewBilan(id) {
      .concat(cible !== null ? [{ name:"Objectif", color:"var(--ink)", dash:"2 3", noDots:true, vals:xs.map((x) => (x.has ? cible : null)) }] : []) }));
   } };
 }
+
+/* ---------- Bandeau de marque des documents ---------- */
+function brandBar(t) { return `<div class="bl-brand">${S.logo ? `<img class="bl-logo" src="${attr(S.logo)}" alt="">` : "<span></span>"}<span class="bl-btitle">${esc(t)}</span></div>`; }
 
 /* ---------- Rapport mensuel (document A4) ---------- */
 const RPT_OPT = { abs:true, persons:true };
@@ -1747,7 +1784,7 @@ function viewReport() {
     <label class="sw"><input type="checkbox" data-bind="rptopt" data-key="persons"${o.persons ? " checked" : ""}> Détail par personne</label>
     <label class="sw"><input type="checkbox" data-bind="rptopt" data-key="abs"${o.abs ? " checked" : ""}> Absences et jours de présence</label></div></section>
   <article class="bilan"><section class="bl-page">
-    <header class="bl-head"><div><div class="bl-kicker">Rapport mensuel · ${y}</div><h2>${MONTHS[m]} ${y}</h2></div>
+    ${brandBar(`Rapport mensuel · ${y}`)}<header class="bl-head"><div><h2>${MONTHS[m]} ${y}</h2></div>
       <dl class="bl-meta"><div><dt>Équipe</dt><dd>${people.length} personne${people.length > 1 ? "s" : ""}</dd></div><div><dt>Édité le</dt><dd>${esc(date)}</dd></div></dl></header>
     ${empty ? `<p class="empty">Aucune donnée saisie pour ce mois.</p>` : `
     <p class="bl-syn">${esc(syn)}</p>
@@ -1817,6 +1854,7 @@ function viewSettings() {
   "<div class=\"ph\"><div><h1>Réglages</h1><p>Vos données sont enregistrées automatiquement sur cet appareil, dans ce navigateur.</p></div></div>" +
   "<section class=\"panel set\">" +
     "<div class=\"setrow\"><div><h3>Apparence</h3><p>Suit le réglage de votre appareil par défaut.</p></div><div class=\"seg\" role=\"group\" aria-label=\"Thème\">" + [["auto", "Auto"], ["light", "Clair"], ["dark", "Sombre"]].map((t) => "<button type=\"button\" data-action=\"theme\" data-v=\"" + t[0] + "\" aria-pressed=\"" + (S.theme === t[0]) + "\">" + t[1] + "</button>").join("") + "</div></div>" +
+    "<div class=\"setrow\"><div><h3>Logo des documents</h3><p>Il s'affiche en en-tête des PDF (bilan, rapport, comparaison), sur un bandeau bleu marine. Choisissez de préférence un logo à fond transparent avec des lettres claires. Il est inclus dans la sauvegarde.</p></div><div style=\"display:flex;gap:10px;flex-wrap:wrap;align-items:center\">" + (S.logo ? "<span style=\"background:#0B2379;padding:8px 14px;border-radius:8px;display:inline-flex\"><img src=\"" + attr(S.logo) + "\" alt=\"Logo actuel\" style=\"height:24px;width:auto\"></span>" : "<span class=\"sub\">Aucun logo</span>") + "<button type=\"button\" class=\"btn\" data-action=\"logo-pick\">Choisir une image</button>" + (S.logo ? "<button type=\"button\" class=\"btn dng\" data-action=\"logo-clear\">Retirer</button>" : "") + "</div></div>" +
     "<div class=\"setrow\"><div><h3>Années</h3><p>Chaque année garde ses propres chiffres. Une nouvelle année démarre vide, avec les jours ouvrés français calculés automatiquement (jours fériés compris) et des coefficients à 1. Années existantes : " + yearsList().join(", ") + ".</p></div><div style=\"display:flex;gap:8px;flex-wrap:wrap;align-items:center\"><div class=\"fld\" style=\"width:110px\"><label for=\"newYear\" class=\"sr\">Nouvelle année</label><input id=\"newYear\" type=\"number\" min=\"2000\" max=\"2100\" value=\"" + (Math.max.apply(null, yearsList()) + 1) + "\"></div><button type=\"button\" class=\"btn\" data-action=\"year-add\">Ajouter</button></div></div>" +
     "<div class=\"setrow\"><div><h3>Supprimer l'année affichée</h3><p>Efface définitivement les chiffres de " + S.year + ". L'année " + BASE_YEAR + " ne peut pas être supprimée (vous pouvez la remettre à zéro).</p></div><button type=\"button\" class=\"btn dng\" data-action=\"year-del\"" + (S.year === BASE_YEAR ? " disabled" : "") + ">Supprimer " + S.year + "</button></div>" +
     "<div class=\"setrow\"><div><h3>Enregistrer une copie</h3><p>Télécharge un fichier de sauvegarde avec toutes vos saisies, toutes années comprises. Utile pour changer d'appareil ou partager les chiffres.</p></div><button type=\"button\" class=\"btn\" data-action=\"export\">Exporter (.json)</button></div>" +
@@ -1926,6 +1964,8 @@ document.addEventListener("click", (e) => {
     l.href = u; l.download = "productivite-easy.json"; document.body.appendChild(l); l.click(); l.remove(); setTimeout(() => URL.revokeObjectURL(u), 500);
   }
   else if (act === "import") $("#importFile").click();
+  else if (act === "logo-pick") $("#logoFile").click();
+  else if (act === "logo-clear") { S.logo = ""; save(); render(true); toast("Logo retiré"); }
   else if (act === "year-add") addYear(parseInt($("#newYear").value, 10));
   else if (act === "year-del") removeYear(S.year);
   else if (act === "reset") {
@@ -1962,6 +2002,12 @@ $("#importFile").addEventListener("change", (e) => {
   const rd = new FileReader();
   rd.onload = () => { try { applyPayload(JSON.parse(rd.result)); applyTheme(); save(); render(true); toast("Données importées"); } catch (err) { toast("Import impossible : " + err.message); } };
   rd.readAsText(f); e.target.value = "";
+});
+$("#logoFile").addEventListener("change", (e) => {
+  const f = e.target.files[0]; if (!f) return;
+  const rd = new FileReader();
+  rd.onload = () => { const img = new Image(); img.onload = () => { const k = Math.min(1, 700 / img.width), c = document.createElement("canvas"); c.width = Math.max(1, Math.round(img.width * k)); c.height = Math.max(1, Math.round(img.height * k)); c.getContext("2d").drawImage(img, 0, 0, c.width, c.height); S.logo = c.toDataURL("image/png"); save(); render(true); toast("Logo enregistré"); }; img.onerror = () => toast("Image illisible."); img.src = rd.result; };
+  rd.readAsDataURL(f); e.target.value = "";
 });
 $("#dlg").addEventListener("keydown", (e) => { if (e.key === "Enter" && e.target.tagName === "INPUT") { e.preventDefault(); const b = $("#dlg [data-action=\"save-dlg\"]"); if (b) b.click(); } });
 $("#dlg").addEventListener("cancel", (e) => {
