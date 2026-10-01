@@ -1,0 +1,1999 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Productivité</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23101C28'/%3E%3Crect x='6' y='14' width='4.5' height='12' rx='1.5' fill='%234DD0E1'/%3E%3Crect x='13.75' y='7' width='4.5' height='19' rx='1.5' fill='%2363D297'/%3E%3Crect x='21.5' y='11' width='4.5' height='15' rx='1.5' fill='%23F7CB4D'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F2F4F7; --panel:#FFFFFF; --ink:#16212C; --muted:#5E6C7B; --line:#DCE2E9; --soft:#EDF0F4;
+  --brand:#1F5FBF; --brand-ink:#FFFFFF; --sel:rgba(31,95,191,.09);
+  --side:#101C28; --side-ink:#C6D1DC; --side-mute:#7D8D9E; --side-on:rgba(255,255,255,.09);
+  --pos:#17724A; --neg:#B3261E; --warn:#9A5B00; --warn-bg:#FFF4DF;
+  --c-mail:#2F6BDB; --c-ech:#F0A03C; --c-cli:#2AA198; --c-urg:#D9534F;
+  --sans:"Schibsted Grotesk",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0B1218; --panel:#131C25; --ink:#E6ECF2; --muted:#93A2B2; --line:#25313D; --soft:#1A2430;
+    --brand:#7FB3FF; --brand-ink:#0B1218; --sel:rgba(127,179,255,.12);
+    --side:#0A1017; --pos:#5FD39A; --neg:#FF8A80; --warn:#F2B75B; --warn-bg:#2A2216;
+    --c-mail:#5B92F5; --c-ech:#F2AE55; --c-cli:#4CC2B8; --c-urg:#F27F7A;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0B1218; --panel:#131C25; --ink:#E6ECF2; --muted:#93A2B2; --line:#25313D; --soft:#1A2430;
+  --brand:#7FB3FF; --brand-ink:#0B1218; --sel:rgba(127,179,255,.12);
+  --side:#0A1017; --pos:#5FD39A; --neg:#FF8A80; --warn:#F2B75B; --warn-bg:#2A2216;
+  --c-mail:#5B92F5; --c-ech:#F2AE55; --c-cli:#4CC2B8; --c-urg:#F27F7A;
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.45;-webkit-text-size-adjust:100%;padding-bottom:env(safe-area-inset-bottom,0px)}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.num,.kv,.mprod b,td{font-variant-numeric:tabular-nums}
+
+/* ---------- Structure ---------- */
+.app{display:grid;grid-template-columns:256px minmax(0,1fr);min-height:100vh}
+.side{background:var(--side);color:var(--side-ink);padding:calc(20px + env(safe-area-inset-top,0px)) 12px 20px;position:sticky;top:0;height:100vh;overflow:auto}
+.brand{display:flex;gap:11px;align-items:center;padding:2px 10px 18px;color:#fff;text-decoration:none}
+.brand b{display:block;font-size:16px;line-height:1.15;letter-spacing:-.01em}
+.brand small{color:var(--side-mute);font-size:12.5px}
+.grp{padding:18px 10px 6px;font-size:12.5px;color:var(--side-mute);font-weight:500}
+.nv{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;color:inherit;text-decoration:none;font-weight:500;font-size:14.5px;position:relative}
+.nv:hover{background:rgba(255,255,255,.05)}
+.nv[aria-current="page"]{background:var(--side-on);color:#fff}
+.nv svg{flex:none;opacity:.85}
+.nv .pd{width:11px;height:11px;border-radius:50%;background:var(--c);flex:none;box-shadow:0 0 0 2px rgba(255,255,255,.14)}
+.nv .fxm{width:18px;text-align:center;font-family:var(--mono);font-style:italic;font-size:13px;opacity:.85}
+.nv .tg{margin-left:auto;font-size:11.5px;color:var(--side-mute)}
+.main{padding:calc(24px + env(safe-area-inset-top,0px)) clamp(16px,3vw,40px) 64px;max-width:1260px;width:100%}
+.ph{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px 20px;margin-bottom:20px}
+.ph h1{margin:0;font-size:clamp(24px,3vw,30px);letter-spacing:-.02em;line-height:1.1;display:flex;align-items:center;gap:12px}
+.ph p{margin:6px 0 0;color:var(--muted);max-width:64ch}
+.bar4{width:6px;height:30px;border-radius:3px;background:var(--c,var(--brand));flex:none}
+
+/* ---------- Composants ---------- */
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px;min-width:0}
+.panel h2{margin:0;font-size:16px;letter-spacing:-.005em}
+.sub{color:var(--muted);font-size:13.5px;margin:2px 0 0}
+.phd{display:flex;flex-wrap:wrap;gap:8px 16px;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.g2{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:16px;margin-top:16px}
+.stack{display:grid;gap:16px;margin-top:16px}
+.btn{border:1px solid var(--line);background:var(--panel);padding:8px 14px;border-radius:9px;font-weight:600;font-size:14px}
+.btn:hover{border-color:var(--muted)}
+.btn.pri{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}
+.btn.pri:hover{filter:brightness(1.07)}
+.btn.dng{color:var(--neg)}
+.btn.sm{padding:5px 11px;font-size:13px}
+.ib{width:34px;height:34px;border:1px solid var(--line);background:var(--panel);border-radius:9px;font-size:18px;line-height:1;display:grid;place-items:center}
+.ib:hover{border-color:var(--muted)}
+.mp{display:flex;gap:6px;align-items:center}
+.mp select,.sel{height:34px;border:1px solid var(--line);background:var(--panel);border-radius:9px;padding:0 30px 0 12px;font-weight:600;appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 17px) 14px,calc(100% - 12px) 14px;background-size:5px 5px;background-repeat:no-repeat}
+.lg{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--muted);align-items:center}
+.lg span,.chipt{display:inline-flex;align-items:center;gap:7px}
+.lg i,.chipt i{width:11px;height:11px;border-radius:3px;background:var(--c);flex:none}
+.chipt{border:1px solid var(--line);background:var(--panel);padding:4px 11px;border-radius:999px;font-size:13px;font-weight:500}
+.chipt[aria-pressed="false"]{opacity:.5}
+.chipt[aria-pressed="false"] i{background:transparent;box-shadow:inset 0 0 0 2px var(--c)}
+.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:2px 10px;font-size:12.5px;color:var(--muted)}
+.pill.warn{background:var(--warn-bg);border-color:transparent;color:var(--warn)}
+.dl{font-weight:600}.dl.pos{color:var(--pos)}.dl.neg{color:var(--neg)}
+.empty{color:var(--muted);padding:18px 0;text-align:center}
+
+/* Indicateurs */
+.strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));background:var(--panel);border:1px solid var(--line);border-radius:12px}
+.kpi{padding:16px 20px;border-left:1px solid var(--line);min-width:0}
+.kpi:first-child{border-left:0}
+.kl{display:block;color:var(--muted);font-size:13.5px}
+.kv{display:block;font-size:30px;font-weight:700;letter-spacing:-.02em;line-height:1.15;margin:3px 0 2px}
+.kv small{font-size:15px;font-weight:500;color:var(--muted);letter-spacing:0;margin-left:3px}
+.ks{display:block;color:var(--muted);font-size:13px}
+
+/* Classement */
+.rk{display:grid;grid-template-columns:minmax(84px,120px) minmax(0,1fr) auto;gap:10px;align-items:center;padding:7px 0;text-decoration:none;border-radius:8px}
+.rk:hover{background:var(--soft)}
+.rk .nm{display:flex;align-items:center;gap:8px;font-weight:600;white-space:nowrap}
+.rk .nm i{width:10px;height:10px;border-radius:50%;background:var(--c);flex:none}
+.trk{height:10px;background:var(--soft);border-radius:5px;overflow:hidden;display:flex}
+.trk i{display:block;height:100%;background:var(--c)}
+.rk .v{font-weight:700;min-width:64px;text-align:right}
+.rk .v small{font-weight:500;color:var(--muted);margin-left:4px}
+.note-line{color:var(--muted);font-size:13px;margin-top:8px}
+
+/* Graphiques */
+.chart{width:100%;min-height:120px}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart text{font-family:var(--sans);font-size:11.5px;fill:var(--muted)}
+.chart .gl{stroke:var(--line);stroke-width:1}
+.chart .hit{fill:transparent}
+.chart .hit:hover{fill:var(--sel)}
+.chart .selb{fill:var(--sel)}
+.tip{position:fixed;z-index:60;pointer-events:none;background:var(--ink);color:var(--panel);padding:8px 11px;border-radius:8px;font-size:12.5px;line-height:1.5;max-width:270px;box-shadow:0 6px 20px rgba(0,0,0,.22)}
+.tip b{display:block;margin-bottom:2px}
+.tip div{display:flex;align-items:center;gap:7px}
+.tip div span{margin-left:auto;padding-left:14px;font-weight:600;font-variant-numeric:tabular-nums}
+.tip i{width:9px;height:9px;border-radius:2px;background:var(--c);flex:none}
+
+/* Fiche personne */
+.mrow{display:grid;grid-template-columns:100px minmax(100px,1fr) 240px 120px 100px auto;gap:6px 14px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.mrow>*{min-width:0}
+.mrow:first-child{border-top:0}
+.mname{font-weight:600}
+.mname small{display:block;font-weight:400;color:var(--muted);font-size:12.5px}
+.mbar{height:12px;background:var(--soft);border-radius:6px;overflow:hidden;display:flex}
+.mbar i{display:block;height:100%}
+.mnums{font-size:13.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:2px 0}
+.mnums .nw{white-space:nowrap}
+.mnums b{color:var(--ink);font-weight:600;margin-left:2px;margin-right:8px}
+.mprod b{font-size:17px}
+.mprod small,.mdays{color:var(--muted);font-size:12.5px;display:block}
+.mrow.none{color:var(--muted)}
+.mnote{grid-column:2/-1;font-size:13px;color:var(--warn);margin-top:-2px}
+.mnote::before{content:"Remarque : ";font-weight:600}
+.mcoef{display:inline-block;background:var(--soft);border-radius:5px;padding:0 6px;font-size:12px;color:var(--muted);margin-left:6px;font-weight:600}
+
+/* Équipe */
+.share{display:flex;height:34px;border-radius:8px;overflow:hidden;background:var(--soft)}
+.share i{display:flex;align-items:center;justify-content:center;font-style:normal;font-size:12.5px;font-weight:700;color:#12202C;min-width:0;overflow:hidden;white-space:nowrap;border-right:2px solid var(--panel)}
+.share i:last-child{border-right:0}
+.shl{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px 14px;margin-top:12px;font-size:13.5px}
+.shl span{display:flex;align-items:center;gap:7px}
+.shl i{width:10px;height:10px;border-radius:50%;background:var(--c)}
+.shl b{margin-left:auto;font-variant-numeric:tabular-nums}
+.tl{list-style:none;padding:0;margin:0}
+.tl li{display:grid;grid-template-columns:110px 1fr;gap:12px;padding:9px 0;border-top:1px solid var(--line)}
+.tl li:first-child{border-top:0}
+.tl b{font-weight:600}
+.tl a{text-decoration:none;font-weight:600}
+.tl a:hover{text-decoration:underline}
+
+/* Formules */
+.fgrid{display:grid;gap:14px}
+.fc{border:1px solid var(--line);border-radius:12px;padding:16px 18px;background:var(--panel)}
+.fc h3{margin:0 0 8px;font-size:15.5px}
+.fc .cl{margin:0 0 6px}
+.fc .ex{margin:0 0 10px;padding:8px 12px;background:var(--soft);border-radius:8px;font-weight:600;font-variant-numeric:tabular-nums}
+.xl{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:4px 12px;font-family:var(--mono);font-size:12.5px;align-items:baseline;border-top:1px dashed var(--line);padding-top:9px}
+.xl .a{color:var(--muted)}
+.xl .f{overflow-wrap:anywhere}
+.xl .r{font-weight:500;text-align:right;color:var(--muted)}
+.xl .r b{color:var(--ink)}
+.xl.head{border-top:0;padding-top:0;margin-bottom:2px;font-family:var(--sans);font-size:12.5px;color:var(--muted)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.diff{background:var(--warn-bg);color:var(--ink);border-radius:12px;padding:16px 20px}
+.diff h3{margin:0 0 6px;font-size:15.5px}
+.diff ul{margin:6px 0 0;padding-left:20px}
+.diff li{margin:5px 0}
+
+/* Réglages */
+.set{display:grid;gap:0}
+.setrow{display:flex;flex-wrap:wrap;gap:10px 24px;align-items:center;justify-content:space-between;padding:16px 0;border-top:1px solid var(--line)}
+.setrow:first-child{border-top:0;padding-top:4px}
+.setrow h3{margin:0;font-size:15px}
+.setrow p{margin:2px 0 0;color:var(--muted);font-size:13.5px;max-width:56ch}
+.seg{display:inline-flex;background:var(--soft);border-radius:10px;padding:3px}
+.seg button{border:0;background:transparent;padding:6px 14px;border-radius:7px;font-weight:600;font-size:14px;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--panel);color:var(--ink);box-shadow:0 0 0 1px var(--line)}
+.sw{display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer}
+.sw input{width:18px;height:18px;accent-color:var(--brand)}
+
+/* Boîte de dialogue */
+dialog{border:1px solid var(--line);border-radius:14px;padding:0;background:var(--panel);color:var(--ink);width:min(580px,calc(100vw - 24px));max-height:calc(100vh - 24px);overflow:hidden}
+dialog[open]{display:flex;flex-direction:column}
+dialog::backdrop{background:rgba(8,14,20,.55)}
+.dh{padding:18px 22px 12px;display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.dh h2{margin:0;font-size:18px}
+.dh p{margin:2px 0 0;color:var(--muted);font-size:13.5px}
+.db{padding:2px 22px 16px;overflow:auto}
+.df{padding:14px 22px;border-top:1px solid var(--line);display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+.ff{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px}
+.fld{display:grid;gap:4px}
+.fld.w{grid-column:1/-1}
+.fld label{font-size:13px;color:var(--muted);font-weight:500}
+.fld input,.fld textarea{border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:8px 11px;font-size:15px;width:100%}
+.fld input:focus,.fld textarea:focus{outline:2px solid var(--brand);outline-offset:0;border-color:transparent}
+.fld small{color:var(--muted);font-size:12.5px}
+.calc{margin-top:16px;border:1px solid var(--line);border-radius:10px;padding:4px 14px;background:var(--soft)}
+.calc div{display:flex;flex-wrap:wrap;gap:2px 10px;justify-content:space-between;padding:8px 0;border-top:1px solid var(--line);font-size:13.5px}
+.calc div:first-child{border-top:0}
+.calc span{color:var(--muted)}
+.calc b{font-variant-numeric:tabular-nums}
+.toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--panel);padding:10px 18px;border-radius:10px;font-weight:600;font-size:14px;z-index:80;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+
+/* ---------- Adaptatif ---------- */
+@media (max-width:1080px){
+  .g2{grid-template-columns:minmax(0,1fr)}
+  .mrow{grid-template-columns:96px minmax(0,1fr) 120px auto}
+  .mrow .mnums{grid-column:2/4;grid-row:2}
+  .mrow .mdays{grid-column:1;grid-row:2}
+  .mrow .mprod{grid-column:3;grid-row:1}
+  .mrow .mact{grid-column:4;grid-row:1}
+  .mrow .mbar{grid-column:2}
+  .two{grid-template-columns:1fr}
+}
+@media (max-width:900px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  .side{position:static;height:auto;padding:calc(12px + env(safe-area-inset-top,0px)) 12px 10px}
+  .brand{padding-bottom:10px}
+  .navs{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;scrollbar-width:thin}
+  .navs .grp{display:none}
+  .nv{flex:none;white-space:nowrap;border:1px solid rgba(255,255,255,.12)}
+  .nv .tg{display:none}
+  .strip{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .kpi:nth-child(3){border-left:0}
+  .kpi:nth-child(n+3){border-top:1px solid var(--line)}
+}
+@media (max-width:560px){
+  .ff{grid-template-columns:1fr}
+  .mrow{grid-template-columns:minmax(0,1fr) auto}
+  .mrow .mname{grid-column:1;grid-row:1}
+  .mrow .mact{grid-column:2;grid-row:1}
+  .mrow .mbar{grid-column:1/-1;grid-row:2}
+  .mrow .mnums{grid-column:1/-1;grid-row:3}
+  .mrow .mprod{grid-column:1;grid-row:4}
+  .mrow .mdays{grid-column:2;grid-row:4;text-align:right}
+  .mnote{grid-column:1/-1}
+  .tl li{grid-template-columns:1fr;gap:2px}
+  .xl{grid-template-columns:1fr}
+  .xl .r{text-align:left}
+  .panel{padding:16px 14px}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.empties{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:14px 0 2px;border-top:1px solid var(--line)}
+.chip-add{border:1px dashed var(--muted);background:transparent;border-radius:999px;padding:3px 12px;font-size:13px;font-weight:600;color:var(--muted)}
+.chip-add:hover{border-color:var(--brand);color:var(--brand)}
+.heatwrap{overflow-x:auto;margin-top:4px}
+table.heat{border-collapse:separate;border-spacing:0;width:100%;min-width:660px;font-size:13.5px}
+.heat th,.heat td{padding:7px 10px;text-align:right;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums;white-space:nowrap}
+.heat thead th{font-weight:600;border-bottom:2px solid var(--line)}
+.heat th:first-child{text-align:left}
+.heat tbody th{font-weight:600}
+.heat .lnk{border:0;background:none;padding:0;font-weight:600;cursor:pointer;color:inherit}
+.heat .lnk:hover{text-decoration:underline}
+.heat tr.cur th{box-shadow:inset 3px 0 0 var(--brand)}
+.heat .pn{display:inline-flex;align-items:center;gap:6px}
+.heat .pn i{width:10px;height:10px;border-radius:50%;background:var(--c)}
+.heat td.hc.hi{color:#0E1A22;font-weight:600}
+.heat td.nod{color:var(--muted);text-align:left;font-style:italic}
+.heat td.cd{color:var(--muted)}
+.heat tfoot th,.heat tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom:0}
+.gr{display:inline-block;width:90px;height:10px;border-radius:5px;background:linear-gradient(90deg,transparent,rgba(87,187,138,.85));box-shadow:inset 0 0 0 1px var(--line)}
+/* Rapport */
+.report{max-width:940px}
+.rp-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:6px 20px;padding-bottom:14px;border-bottom:2px solid var(--ink);margin-bottom:16px}
+.rp-head h2{margin:0;font-size:28px;letter-spacing:-.02em;line-height:1.1}
+.rp-head p{margin:0;color:var(--muted);font-size:13.5px}
+.rp-sec{margin-top:16px}
+.rp-sec>h3{margin:0 0 8px;font-size:15.5px}
+.rp2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+table.rt{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}
+.rt th,.rt td{padding:7px 8px;text-align:right;border-bottom:1px solid var(--line)}
+.rt th:first-child,.rt td:first-child{text-align:left}
+.rt thead th{font-weight:600;border-bottom:2px solid var(--ink)}
+.rt .pn{display:inline-flex;align-items:center;gap:7px;font-weight:600}
+.rt .pn i{width:10px;height:10px;border-radius:50%;background:var(--c)}
+.rt td.b{font-weight:700}
+a.btn{text-decoration:none;display:inline-block}
+.gp{color:var(--pos);font-weight:600}.gn{color:var(--neg);font-weight:600}
+.bf h4{margin:0 0 6px;font-size:14.5px}
+.bf textarea{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:9px 11px;font-size:14.5px;resize:vertical;min-height:110px}
+.bf textarea:focus{outline:2px solid var(--brand);outline-offset:0;border-color:transparent}
+.po{display:none;white-space:pre-wrap;border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-height:96px;font-size:13px}
+.sig{gap:16px}
+.sig>div{border-top:1px solid var(--ink);padding-top:6px;min-height:64px;color:var(--muted);font-size:12.5px}
+.rp-notes{margin:0;padding-left:18px}
+.rp-notes li{margin:4px 0}
+@media (max-width:760px){.rp2{grid-template-columns:1fr}.rp-head h2{font-size:23px}.rt{min-width:520px}.rtw{overflow-x:auto}}
+@media print{
+  @page{size:A4;margin:12mm}
+  html:root:root:root{--bg:#fff;--panel:#fff;--ink:#16212C;--muted:#4C5966;--line:#CBD3DC;--soft:#EDF0F4;--brand:#1F5FBF;--sel:rgba(31,95,191,.09);--c-mail:#2F6BDB;--c-ech:#F0A03C;--c-cli:#2AA198;--c-urg:#D9534F;--pos:#17724A;--neg:#B3261E;--warn:#9A5B00;--warn-bg:#FFF4DF}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{background:#fff;font-size:12.5px}
+  .side,.noprint,.toast,.tip,dialog,.mp,.btn,.ctrl,.ih,.infopop,.qs,.present-exit{display:none!important}
+  .app{display:block}
+  .main{padding:0;max-width:none}
+  .report{max-width:none}
+  .panel,.fc,.strip,.rp-sec,.mrow{break-inside:avoid}
+  .chart .hit{display:none}
+  .po{display:block}
+  .sig.po{display:grid;grid-template-columns:repeat(3,1fr);margin-top:22px}
+  .rp2{grid-template-columns:1fr 1fr!important;gap:14px}
+  .strip{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+  .kpi{border-left:1px solid var(--line)!important;border-top:0!important}
+  .kv{font-size:26px;white-space:nowrap}
+  .kv small{font-size:13px}
+  .kpi:first-child{border-left:0!important}
+  .panel{padding:14px 16px}
+  .rp-sec{margin-top:12px}
+  .report .rtw{overflow:visible}
+  .rt{min-width:0!important}
+  .bf{break-inside:avoid}
+  .po{min-height:130px}
+  .sig.po{border:0;padding:0;min-height:0;margin-top:26px}
+  .bilan .rp-head h2,.report .rp-head h2{font-size:24px}
+  .entretien{break-inside:avoid;margin-top:16px}
+  h2,h3,h4{break-after:avoid}
+}
+/* Recherche rapide */
+.side{position:relative}
+.qs{position:relative;margin:0 0 14px}
+.qs input{width:100%;height:36px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.07);border-radius:9px;padding:0 12px;color:#fff;font-size:14px}
+.qs input::placeholder{color:var(--side-mute)}
+.qs input:focus{outline:2px solid #7FB3FF;outline-offset:1px;background:rgba(255,255,255,.12)}
+.qsList{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:10px;box-shadow:0 12px 32px rgba(0,0,0,.3);z-index:45;max-height:min(60vh,420px);overflow:auto;padding:6px}
+.qsItem{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:none;padding:8px 10px;border-radius:8px}
+.qsItem:hover,.qsItem:focus-visible{background:var(--soft)}
+.qsItem i{width:9px;height:9px;border-radius:50%;background:var(--c,var(--muted));flex:none}
+.qsItem i.qsdot{opacity:.45}
+.qsItem b{display:block;font-weight:600;font-size:13.5px}
+.qsItem small{color:var(--muted);font-size:12px}
+.qsEmpty{margin:0;padding:10px;color:var(--muted);font-size:13px}
+/* Notes explicatives */
+.kl{display:inline-flex;align-items:center;gap:5px}
+h2 .ih,h3 .ih{margin-left:7px;vertical-align:2px}
+.ih{width:16px;height:16px;border-radius:50%;border:1px solid var(--muted);background:none;color:var(--muted);font-size:10.5px;line-height:1;display:inline-flex;align-items:center;justify-content:center;font-weight:700;flex:none;padding:0}
+.rt .ih{margin-left:6px;vertical-align:1px}
+.ih:hover,.ih[aria-expanded="true"]{border-color:var(--brand);color:var(--brand)}
+.infopop{position:fixed;z-index:75;max-width:280px;background:var(--ink);color:var(--panel);padding:10px 13px;border-radius:9px;font-size:13px;line-height:1.5;box-shadow:0 10px 28px rgba(0,0,0,.3)}
+/* Mode présentation */
+body.presenting .side{display:none}
+body.presenting .app{grid-template-columns:1fr}
+body.presenting .main{max-width:1440px;margin:0 auto;padding-top:64px}
+body.presenting .kv{font-size:38px}
+body.presenting .ph h1{font-size:32px}
+body.presenting .ph p{font-size:15.5px}
+body.presenting .btn.sm,body.presenting .mact,body.presenting .chip-add{display:none}
+.present-exit{display:none;position:fixed;top:16px;right:16px;z-index:55;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:9px 16px;border-radius:999px;font-weight:600;font-size:13.5px;box-shadow:0 6px 20px rgba(0,0,0,.16)}
+body.presenting .present-exit{display:inline-flex;align-items:center;gap:6px}
+/* Comparaison dans le temps (bilan) */
+table.rt.cmp td:first-child,table.rt.cmp th:first-child{text-align:left;font-weight:500;color:var(--muted)}
+table.rt.cmp td.b,table.rt.cmp th.b{font-weight:700;color:var(--ink)}
+@media (max-width:900px){.qsList{position:fixed;left:12px;right:12px;top:auto}}
+/* ---------- Bilan annuel : document ---------- */
+.bilan{display:grid;gap:18px;max-width:794px;font-size:13.5px}
+.bl-page{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:34px 40px 26px;position:relative;min-width:0}
+.bl-kicker{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--brand);font-weight:700}
+.bl-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:10px 24px;padding-bottom:12px;border-bottom:2px solid var(--ink);margin-bottom:16px}
+.bl-head h2{margin:2px 0 0;font-size:30px;letter-spacing:-.02em;line-height:1.05}
+.bl-head2 h2{font-size:22px}
+.bl-meta{display:flex;flex-wrap:wrap;gap:6px 22px;margin:0}
+.bl-meta div{min-width:0}
+.bl-meta dt{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.bl-meta dd{margin:1px 0 0;font-weight:600;font-size:13px}
+.bl-h{margin:18px 0 8px;font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-weight:700;display:flex;align-items:center;gap:10px}
+.bl-h::after{content:"";flex:1;height:1px;background:var(--line)}
+.bl-syn{margin:0;padding:12px 16px;background:var(--soft);border-left:3px solid var(--brand);border-radius:0 8px 8px 0;font-size:14px;line-height:1.55}
+.bl-cards{display:grid;gap:10px}
+.bl-card{border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-width:0}
+.bl-card .l{display:block;font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.bl-card .v{display:block;font-size:24px;font-weight:700;letter-spacing:-.02em;line-height:1.2;margin:2px 0;font-variant-numeric:tabular-nums;white-space:nowrap}
+.bl-card .v small{font-size:12px;font-weight:500;color:var(--muted);margin-left:3px;letter-spacing:0}
+.bl-card .d{display:block;font-size:11.5px;color:var(--muted);line-height:1.35}
+.bl-tw{overflow-x:auto}
+table.bl-t{width:100%;border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums}
+.bl-t th,.bl-t td{padding:5px 8px;text-align:right;border-bottom:1px solid var(--line)}
+.bl-t th:first-child,.bl-t td:first-child{text-align:left}
+.bl-t thead th{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600;border-bottom:1.5px solid var(--ink)}
+.bl-t tfoot{display:table-row-group}
+.bl-t tfoot td{font-weight:700;border-top:1.5px solid var(--ink);border-bottom:0}
+.bl-t.dense th,.bl-t.dense td{padding:3px 8px}
+.bl-t td:not(:first-child),.bl-t th:not(:first-child){white-space:nowrap}
+.bl-obj th,.bl-obj td{text-align:left}
+.bl-obj td{padding:3px 4px}
+.bl-notes{margin:0;padding-left:16px;font-size:12px;color:var(--muted);line-height:1.5}
+.bl-notes li{margin:2px 0}
+.bl-foot{display:flex;justify-content:space-between;gap:12px;margin-top:22px;padding-top:8px;border-top:1px solid var(--line);font-size:10.5px;color:var(--muted)}
+.bl-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.bl-f h4{margin:0 0 4px;font-size:12.5px}
+.bl-ta,.bl-in{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:8px 10px;font-size:14px}
+.bl-ta{resize:vertical;min-height:84px}
+.bl-in{padding:6px 8px;font-size:13.5px}
+.bl-ta:focus,.bl-in:focus{outline:2px solid var(--brand);outline-offset:0;border-color:transparent}
+.pv{display:none}
+.bl-sigs{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px}
+.bl-sig{border-top:1.5px solid var(--ink);padding-top:5px;min-height:70px;font-size:11.5px;color:var(--muted)}
+.bl-sig b{display:block;color:var(--ink);font-size:12.5px;margin-top:2px}
+.bl-optgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 14px}
+.bl-checks{display:flex;flex-wrap:wrap;gap:8px 24px;margin-top:12px}
+@media (max-width:640px){
+  .bl-page{padding:22px 16px 18px}
+  .bl-2,.bl-optgrid{grid-template-columns:1fr}
+  .bl-cards{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .bl-sigs{grid-template-columns:1fr}
+}
+@media print{
+  @page bilan{size:A4;margin:0}
+  .bilan{page:bilan;display:block;max-width:none;font-size:11.5px;line-height:1.35}
+  .bl-page{width:100%;min-height:296mm;margin:0;padding:13mm 15mm 20mm;border:0;border-radius:0;background:#fff;break-after:page}
+  .bl-page:last-child{break-after:auto}
+  .bl-foot{position:absolute;left:15mm;right:15mm;bottom:9mm;margin:0}
+  .bl-head{padding-bottom:7px;margin-bottom:9px}
+  .bl-head h2{font-size:24px}
+  .bl-head2 h2{font-size:19px}
+  .bl-h{margin:10px 0 5px;break-after:avoid}
+  .bl-syn{font-size:12px;padding:7px 12px;line-height:1.45}
+  .bl-card{padding:6px 9px;break-inside:avoid}
+  .bl-card .v{font-size:19px;margin:1px 0}
+  .bl-card .d{font-size:10.5px;line-height:1.3}
+  .bl-tw{overflow:visible}
+  .bl-t{font-size:10.5px;line-height:1.25}
+  .bl-t th,.bl-t td{padding:2.5px 7px}
+  .bl-t.dense th,.bl-t.dense td{padding:1.4px 5px}
+  .bl-t tr{break-inside:avoid}
+  .bl-obj td{padding:0}
+  .bl-notes{font-size:10px;line-height:1.4}
+  .bl-notes li{margin:1px 0}
+  .pv{display:block;white-space:pre-wrap;overflow-wrap:anywhere;border:1px solid var(--line);border-radius:4px;padding:5px 8px;min-height:var(--mh,18mm);font-size:11px}
+  .bl-obj .pv{border:0;border-radius:0;min-height:8mm}
+  .bl-obj td{border:1px solid var(--line)}
+  .bl-2{gap:10px}
+  .bl-sig{min-height:30mm}
+}
+table.rt.cmp td.gp{color:var(--pos)}
+table.rt.cmp td.gn{color:var(--neg)}
+.cmpdoc{display:none}
+.bl-t td.b{font-weight:700}
+.cmpdoc .bl-t td:first-child{min-width:36mm}
+.bl-note{margin:6px 0 0;font-size:10.5px;color:var(--muted)}
+.bl-notes.bl-pts{color:var(--ink);font-size:12.5px}
+@media print{
+  body.print-cmp .main>*:not(.cmpdoc){display:none!important}
+  body.print-cmp .cmpdoc{display:block}
+  .bl-note{font-size:9.5px;line-height:1.35}
+  .bl-notes.bl-pts{font-size:11px}
+}
+.yr{margin:0 0 12px}
+.yr select{width:100%;height:36px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.07);color:#fff;border-radius:9px;padding:0 10px;font-weight:600}
+.yr option{color:#16212C}
+.bl-t .pn{display:inline-flex;align-items:center;gap:7px;font-weight:600}
+.bl-t .pn i{width:10px;height:10px;border-radius:50%;background:var(--c)}
+.bl-t small{color:var(--muted);font-weight:500}
+.mprod small.n1{margin-top:1px}
+@media (max-width:900px){.yr{margin-bottom:8px}}
+</style>
+</head>
+<body>
+<noscript>Cette application nécessite JavaScript.</noscript>
+<div class="app">
+  <aside class="side" id="side"></aside>
+  <main class="main" id="main" tabindex="-1"></main>
+</div>
+<button type="button" id="presentExit" class="present-exit" data-action="present-exit">✕ Quitter la présentation</button>
+<dialog id="dlg" aria-labelledby="dlgTitle"></dialog>
+<div class="tip" id="tip" role="tooltip" hidden></div>
+<div class="toast" id="toast" role="status" hidden></div>
+<input type="file" id="importFile" accept="application/json,.json" hidden>
+
+<script type="application/json" id="data">{"sheets":[{"name":"Anais","hidden":false,"rows":14,"cols":11,"merges":[],"cells":{}},{"name":"Charlotte","hidden":false,"rows":14,"cols":11,"merges":[],"cells":{}},{"name":"Clara","hidden":false,"rows":14,"cols":11,"merges":[],"cells":{}},{"name":"Léa","hidden":true,"rows":14,"cols":8,"merges":[],"cells":{}},{"name":"Ben","hidden":false,"rows":14,"cols":11,"merges":[],"cells":{}},{"name":"Régis","hidden":false,"rows":14,"cols":11,"merges":[],"cells":{}},{"name":"Pierrick","hidden":false,"rows":14,"cols":11,"merges":[],"cells":{}},{"name":"Virginie","hidden":true,"rows":14,"cols":8,"merges":[],"cells":{}}]}</script>
+<script>
+/* Mini moteur de formules Excel : références, plages, inter-feuilles, SUM, AVERAGE, etc. */
+const XL = (function () {
+  const ERR = (e) => ({ e });
+  const isErr = (v) => v && typeof v === "object" && "e" in v;
+
+  const colToNum = (s) => s.split("").reduce((n, ch) => n * 26 + ch.charCodeAt(0) - 64, 0);
+  const numToCol = (n) => { let s = ""; while (n > 0) { const m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - 1) / 26); } return s; };
+  const splitRef = (a) => { const m = /^\$?([A-Z]{1,3})\$?(\d+)$/.exec(a); return { c: colToNum(m[1]), r: +m[2] }; };
+
+  /* ---------- Tokenizer ---------- */
+  const REF = "\\$?[A-Z]{1,3}\\$?\\d+";
+  const TOKEN = new RegExp(
+    "\\s*(?:" +
+    "(?<num>\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?)" +
+    "|(?<str>\"(?:[^\"]|\"\")*\")" +
+    "|(?<ref>(?:(?:'(?<qs>[^']+)'|(?<us>[A-Za-z_\\u00C0-\\u024F][\\w\\u00C0-\\u024F.]*))!)?(?<a>" + REF + ")(?::(?<b>" + REF + "))?)(?![\\w(])" +
+    "|(?<fn>[A-Za-z][A-Za-z0-9.]*)(?=\\()" +
+    "|(?<op><=|>=|<>|[-+*/^&=<>(),%])" +
+    ")", "y");
+
+  function tokenize(src) {
+    const toks = []; let pos = 0;
+    while (pos < src.length) {
+      TOKEN.lastIndex = pos;
+      const m = TOKEN.exec(src);
+      if (!m) { if (/^\s*$/.test(src.slice(pos))) break; throw new Error("Syntaxe: " + src.slice(pos)); }
+      pos = TOKEN.lastIndex; const g = m.groups;
+      if (g.num !== undefined) toks.push({ t: "num", v: parseFloat(g.num) });
+      else if (g.str !== undefined) toks.push({ t: "str", v: g.str.slice(1, -1).replace(/""/g, '"') });
+      else if (g.a !== undefined) toks.push({ t: "ref", sheet: g.qs || g.us || null, a: g.a.replace(/\$/g, ""), b: g.b ? g.b.replace(/\$/g, "") : null, raw: m[0].trim() });
+      else if (g.fn !== undefined) toks.push({ t: "fn", v: g.fn.toUpperCase() });
+      else toks.push({ t: "op", v: g.op });
+    }
+    return toks;
+  }
+
+  /* ---------- Parser (descente récursive) ---------- */
+  function parse(formula) {
+    const toks = tokenize(formula.replace(/^=/, ""));
+    let i = 0;
+    const peek = () => toks[i], next = () => toks[i++];
+    const isOp = (v) => peek() && peek().t === "op" && peek().v === v;
+
+    function cmp() {
+      let l = concat();
+      while (peek() && peek().t === "op" && ["=", "<>", "<", ">", "<=", ">="].includes(peek().v)) {
+        const op = next().v; l = { k: "bin", op, l, r: concat() };
+      }
+      return l;
+    }
+    function concat() {
+      let l = add();
+      while (isOp("&")) { next(); l = { k: "bin", op: "&", l, r: add() }; }
+      return l;
+    }
+    function add() {
+      let l = mul();
+      while (isOp("+") || isOp("-")) { const op = next().v; l = { k: "bin", op, l, r: mul() }; }
+      return l;
+    }
+    function mul() {
+      let l = pow();
+      while (isOp("*") || isOp("/")) { const op = next().v; l = { k: "bin", op, l, r: pow() }; }
+      return l;
+    }
+    function pow() {
+      let l = unary();
+      while (isOp("^")) { next(); l = { k: "bin", op: "^", l, r: unary() }; }
+      return l;
+    }
+    function unary() {
+      if (isOp("-")) { next(); return { k: "neg", x: unary() }; }
+      if (isOp("+")) { next(); return unary(); }
+      return postfix();
+    }
+    function postfix() {
+      let x = primary();
+      while (isOp("%")) { next(); x = { k: "bin", op: "/", l: x, r: { k: "num", v: 100 } }; }
+      return x;
+    }
+    function primary() {
+      const t = next();
+      if (!t) throw new Error("Formule incomplète");
+      if (t.t === "num") return { k: "num", v: t.v };
+      if (t.t === "str") return { k: "str", v: t.v };
+      if (t.t === "ref") return { k: "ref", sheet: t.sheet, a: t.a, b: t.b, raw: t.raw };
+      if (t.t === "fn") {
+        next(); // (
+        const args = [];
+        if (isOp(")")) { next(); return { k: "fn", name: t.v, args }; }
+        for (;;) {
+          if (isOp(",") || isOp(")")) args.push({ k: "empty" });
+          else args.push(cmp());
+          if (isOp(",")) { next(); continue; }
+          if (isOp(")")) { next(); break; }
+          throw new Error("Attendu , ou )");
+        }
+        return { k: "fn", name: t.v, args };
+      }
+      if (t.t === "op" && t.v === "(") { const e = cmp(); if (!isOp(")")) throw new Error("Parenthèse manquante"); next(); return e; }
+      throw new Error("Jeton inattendu");
+    }
+    const ast = cmp();
+    if (i < toks.length) throw new Error("Formule invalide");
+    return ast;
+  }
+
+  /* ---------- Classeur ---------- */
+  class Book {
+    constructor(sheets) {
+      this.sheets = {}; this.order = [];
+      sheets.forEach((s) => {
+        this.order.push(s.name);
+        const raw = {};
+        for (const [addr, c] of Object.entries(s.cells)) {
+          if (c.f !== undefined) raw[addr] = c.f;
+          else if (c.v !== undefined) raw[addr] = c.v;
+        }
+        this.sheets[s.name] = raw;
+      });
+      this.astCache = new Map(); this.valCache = new Map(); this.stack = new Set();
+    }
+    getRaw(sh, a) { return this.sheets[sh] ? this.sheets[sh][a] : undefined; }
+    setRaw(sh, a, val) {
+      if (val === "" || val === null || val === undefined) delete this.sheets[sh][a]; else this.sheets[sh][a] = val;
+      this.astCache.delete(sh + "!" + a); this.valCache.clear();
+    }
+    isFormula(sh, a) { const r = this.getRaw(sh, a); return typeof r === "string" && r.startsWith("="); }
+    ast(sh, a) {
+      const key = sh + "!" + a;
+      if (!this.astCache.has(key)) {
+        let v; try { v = parse(this.getRaw(sh, a)); } catch (e) { v = { k: "err", m: e.message }; }
+        this.astCache.set(key, v);
+      }
+      return this.astCache.get(key);
+    }
+    value(sh, a) {
+      const raw = this.getRaw(sh, a);
+      if (raw === undefined) return null;
+      if (!(typeof raw === "string" && raw.startsWith("="))) return raw;
+      const key = sh + "!" + a;
+      if (this.valCache.has(key)) return this.valCache.get(key);
+      if (this.stack.has(key)) return ERR("#REF!");
+      this.stack.add(key);
+      let res;
+      try { const ast = this.ast(sh, a); res = ast.k === "err" ? ERR("#NAME?") : this.ev(ast, sh); if (res && res.range) res = ERR("#VALUE!"); if (res === null) res = 0; }
+      catch (e) { res = e && e.xl ? ERR(e.xl) : ERR("#VALUE!"); }
+      this.stack.delete(key);
+      this.valCache.set(key, res);
+      return res;
+    }
+    rangeVals(sh, a, b) {
+      if (!this.sheets[sh]) throw { xl: "#REF!" };
+      const A = splitRef(a), B = splitRef(b);
+      const rows = [];
+      for (let r = Math.min(A.r, B.r); r <= Math.max(A.r, B.r); r++) {
+        const row = [];
+        for (let c = Math.min(A.c, B.c); c <= Math.max(A.c, B.c); c++) row.push(this.value(sh, numToCol(c) + r));
+        rows.push(row);
+      }
+      return { range: rows };
+    }
+    num(v) {
+      if (isErr(v)) throw { xl: v.e };
+      if (v === null || v === undefined || v === "") return 0;
+      if (typeof v === "number") return v;
+      if (typeof v === "boolean") return v ? 1 : 0;
+      const n = Number(String(v).replace(",", "."));
+      if (Number.isNaN(n)) throw { xl: "#VALUE!" };
+      return n;
+    }
+    ev(n, sh) {
+      switch (n.k) {
+        case "num": return n.v;
+        case "str": return n.v;
+        case "empty": return { empty: true };
+        case "neg": return -this.num(this.scalar(this.ev(n.x, sh)));
+        case "ref": {
+          const s = n.sheet || sh;
+          if (!this.sheets[s]) throw { xl: "#REF!" };
+          if (n.b) return this.rangeVals(s, n.a, n.b);
+          return this.value(s, n.a);
+        }
+        case "bin": {
+          const L = this.scalar(this.ev(n.l, sh)), R = this.scalar(this.ev(n.r, sh));
+          if (n.op === "&") return String(this.txt(L)) + String(this.txt(R));
+          if (["=", "<>", "<", ">", "<=", ">="].includes(n.op)) {
+            if (isErr(L)) throw { xl: L.e }; if (isErr(R)) throw { xl: R.e };
+            const a = L === null ? (typeof R === "string" ? "" : 0) : L, b = R === null ? (typeof L === "string" ? "" : 0) : R;
+            switch (n.op) { case "=": return a === b; case "<>": return a !== b; case "<": return a < b; case ">": return a > b; case "<=": return a <= b; default: return a >= b; }
+          }
+          const a = this.num(L), b = this.num(R);
+          switch (n.op) {
+            case "+": return a + b; case "-": return a - b; case "*": return a * b;
+            case "/": if (b === 0) throw { xl: "#DIV/0!" }; return a / b;
+            case "^": return Math.pow(a, b);
+          }
+          break;
+        }
+        case "fn": return this.fn(n, sh);
+      }
+      throw { xl: "#VALUE!" };
+    }
+    txt(v) { if (isErr(v)) throw { xl: v.e }; return v === null ? "" : v; }
+    scalar(v) { if (v && v.range) { if (v.range.length === 1 && v.range[0].length === 1) return v.range[0][0]; throw { xl: "#VALUE!" }; } if (v && v.empty) return 0; return v; }
+    /* collecte de nombres selon la sémantique Excel :
+       - plage : seules les cellules numériques comptent (texte/vides ignorés)
+       - argument direct : nombre, texte convertible ; argument vide = 0 (compté) */
+    nums(args, sh) {
+      const out = [];
+      for (const a of args) {
+        const v = this.ev(a, sh);
+        if (v && v.range) { for (const row of v.range) for (const x of row) { if (isErr(x)) throw { xl: x.e }; if (typeof x === "number") out.push(x); } }
+        else if (v && v.empty) out.push(0);
+        else if (a.k === "ref") { if (isErr(v)) throw { xl: v.e }; if (typeof v === "number") out.push(v); }
+        else out.push(this.num(v));
+      }
+      return out;
+    }
+    fn(n, sh) {
+      const A = n.args;
+      switch (n.name) {
+        case "SUM": return this.nums(A, sh).reduce((s, x) => s + x, 0);
+        case "AVERAGE": { const x = this.nums(A, sh); if (!x.length) throw { xl: "#DIV/0!" }; return x.reduce((s, y) => s + y, 0) / x.length; }
+        case "MIN": { const x = this.nums(A, sh); return x.length ? Math.min(...x) : 0; }
+        case "MAX": { const x = this.nums(A, sh); return x.length ? Math.max(...x) : 0; }
+        case "COUNT": return this.nums(A, sh).length;
+        case "ABS": return Math.abs(this.num(this.scalar(this.ev(A[0], sh))));
+        case "ROUND": { const v = this.num(this.scalar(this.ev(A[0], sh))), d = A[1] ? this.num(this.scalar(this.ev(A[1], sh))) : 0, p = Math.pow(10, d); return Math.round(v * p) / p; }
+        case "IF": { const c = this.scalar(this.ev(A[0], sh)); if (isErr(c)) throw { xl: c.e }; const t = !!(typeof c === "string" ? c : this.num(c)); return t ? this.scalar(this.ev(A[1] || { k: "num", v: 1 }, sh)) : (A[2] ? this.scalar(this.ev(A[2], sh)) : false); }
+        case "IFERROR": { try { const v = this.scalar(this.ev(A[0], sh)); if (isErr(v)) return this.scalar(this.ev(A[1], sh)); return v; } catch (e) { return this.scalar(this.ev(A[1], sh)); } }
+      }
+      throw { xl: "#NAME?" };
+    }
+    /* références utilisées par une formule (pour l'affichage des précédents) */
+    precedents(sh, a) {
+      const out = [];
+      if (!this.isFormula(sh, a)) return out;
+      const walk = (n) => {
+        if (!n) return;
+        if (n.k === "ref") out.push({ sheet: n.sheet || sh, a: n.a, b: n.b, raw: n.raw });
+        if (n.l) walk(n.l); if (n.r) walk(n.r); if (n.x) walk(n.x); if (n.args) n.args.forEach(walk);
+      };
+      const ast = this.ast(sh, a); if (ast.k !== "err") walk(ast);
+      return out;
+    }
+  }
+  return { Book, splitRef, numToCol, colToNum, isErr, parse };
+})();
+if (typeof module !== "undefined") module.exports = XL;
+
+</script>
+<script>
+(function () {
+"use strict";
+
+/* =====================================================================
+   1. Données et moteur de formules (les formules Excel restent actives)
+   ===================================================================== */
+const DATA = JSON.parse(document.getElementById("data").textContent);
+const book = new XL.Book(DATA.sheets);
+const ORIG = JSON.parse(JSON.stringify(book.sheets));
+
+const MONTHS = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
+const M3 = ["Jan","Fév","Mar","Avr","Mai","Juin","Juil","Août","Sep","Oct","Nov","Déc"];
+const LAY = {
+  std:   { mail:"B", ech:"C", cli:"D", urg:"E", tot:"F", jours:"G", moy:"H", abs:"I", prod:"J", note:"K", avg:"J14" },
+  small: { mail:"B", ech:"C", tot:"D", jours:"E", moy:"F", abs:"G", prod:"H", avg:"H14" }
+};
+const PEOPLE = [
+  { id:"Anais",    color:"#0FA3B8", layout:"std",   hidden:false, flag:"" },
+  { id:"Charlotte",color:"#1FA463", layout:"std",   hidden:false, flag:"" },
+  { id:"Clara",    color:"#D49A00", layout:"std",   hidden:false, flag:"" },
+  { id:"Ben",      color:"#3B72E0", layout:"std",   hidden:false, flag:"" },
+  { id:"Régis",    color:"#12867B", layout:"std",   hidden:false, flag:"" },
+  { id:"Pierrick", color:"#6B9C1F", layout:"std",   hidden:false, flag:"" },
+  { id:"Léa",      color:"#E2521B", layout:"small", hidden:true,  flag:"" },
+  { id:"Virginie", color:"#8A6BD1", layout:"small", hidden:true,  flag:"" }
+];
+const P = (id) => PEOPLE.find((p) => p.id === id);
+const REF_FROM_BASE = {};
+const DEFAULT_REF = {};
+const refFrom = (y) => (S.refRules && S.refRules[y]) || (y === BASE_YEAR ? REF_FROM_BASE : DEFAULT_REF);
+const refIncluded = (id, m, y) => { const r = refFrom(y === undefined ? S.year : y)[id]; return r === undefined || m >= r; };
+const refNote = () => {
+  const r = refFrom(S.year), ex = [], part = [];
+  PEOPLE.forEach((p) => { const m = r[p.id]; if (m === undefined) return; if (m > 11) ex.push(p.id); else if (m > 0) part.push(p.id + " à partir de " + MONTHS[m].toLowerCase()); });
+  const bits = []; if (ex.length) bits.push("Hors " + ex.join(" et ")); part.forEach((t) => bits.push(t));
+  return bits.length ? bits.join(", ") : "Toute l'équipe";
+};
+const TOTAL_COL = { Pierrick:"C", Anais:"D", Charlotte:"E", Clara:"F", Virginie:"G", "Léa":"H", Ben:"I", "Régis":"J" };
+const TEAM_NOTES_BASE = [];
+const teamNotes = () => (S.year === BASE_YEAR ? TEAM_NOTES_BASE : []);
+
+/* ---------- État de l'application ---------- */
+const KEY = "productivite-easy:v2", LEGACY_KEY = "productivite-easy-26:v1";
+const BASE_YEAR = 2026; /* année du fichier Excel d'origine */
+const TOTAL_SHEET = book.sheets.Total;
+const clone = (o) => JSON.parse(JSON.stringify(o));
+const S = { month:0, year:BASE_YEAR, coef:{}, notes:{}, incl:{}, bilan:{}, theme:"auto", lineOff:{}, pdMonth:null, fx:{ p:"Anais", m:0 }, cmp:{}, goal:{}, proj:{ base:"ytd" }, refRules:{} };
+const YEARS = {};
+let prevCache = {};
+let curMonth = -1;
+const calcCurMonth = (y) => { const d = new Date(); return d.getFullYear() === y ? d.getMonth() : -1; };
+const PERSON_SHEETS = PEOPLE.map((p) => p.id);
+
+/* Jours ouvrés français (fériés fixes + lundi de Pâques, Ascension, lundi de Pentecôte) */
+function easterDate(y) {
+  const a = y % 19, b = Math.floor(y / 100), c = y % 100, d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30, i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - h - k) % 7, mm = Math.floor((a + 11 * h + 22 * l) / 451), mo = Math.floor((h + l - 7 * mm + 114) / 31), da = ((h + l - 7 * mm + 114) % 31) + 1;
+  return new Date(y, mo - 1, da);
+}
+function workingDays(y, m) {
+  const E = easterDate(y), add = (n) => { const d = new Date(E); d.setDate(d.getDate() + n); return d; };
+  const hol = new Set(["0-1", "4-1", "4-8", "6-14", "7-15", "10-1", "10-11", "11-25"]);
+  [1, 39, 50].forEach((n) => { const d = add(n); hol.add(d.getMonth() + "-" + d.getDate()); });
+  let n = 0; const last = new Date(y, m + 1, 0).getDate();
+  for (let d = 1; d <= last; d++) { const w = new Date(y, m, d).getDay(); if (w !== 0 && w !== 6 && !hol.has(m + "-" + d)) n++; }
+  return n;
+}
+/* Le comptage des échanges clients et des urgences a débuté le 14/09 de l'année de base */
+const all4In = (p, m, y) => !!LAY[p.layout].cli && (y > BASE_YEAR || (y === BASE_YEAR && m >= 8));
+const all4of = (p, m) => all4In(p, m, S.year);
+
+function baseDefault() { return blankYear(BASE_YEAR); }
+function blankSheet(p, y) {
+  const L = LAY[p.layout], raw = {};
+  for (let m = 0; m < 12; m++) {
+    const r = m + 2;
+    raw[L.jours + r] = workingDays(y, m);
+    raw[L.tot + r] = all4In(p, m, y) ? "=SUM(B" + r + ":E" + r + ")" : "=SUM(B" + r + ":C" + r + ")";
+    raw[L.moy + r] = "=" + L.tot + r + "/" + L.jours + r;
+    raw[L.prod + r] = "=" + L.tot + r + "/(" + L.jours + r + "-" + L.abs + r + ")";
+  }
+  return raw;
+}
+function blankYear(y) {
+  const d = { sheets:{}, coef:{}, notes:{}, incl:{}, bilan:{} };
+  PEOPLE.forEach((p) => { d.sheets[p.id] = blankSheet(p, y); d.coef[p.id] = Array(12).fill(1); d.notes[p.id] = Array(12).fill(""); d.incl[p.id] = true; });
+  return d;
+}
+function fixYear(y, d) {
+  const b = y === BASE_YEAR ? baseDefault() : blankYear(y), o = { sheets:{}, coef:{}, notes:{}, incl:{}, bilan:(d && d.bilan) || {} };
+  PEOPLE.forEach((p) => {
+    o.sheets[p.id] = d && d.sheets && d.sheets[p.id] ? d.sheets[p.id] : b.sheets[p.id];
+    o.coef[p.id] = d && d.coef && Array.isArray(d.coef[p.id]) && d.coef[p.id].length === 12 ? d.coef[p.id] : b.coef[p.id];
+    o.notes[p.id] = d && d.notes && Array.isArray(d.notes[p.id]) && d.notes[p.id].length === 12 ? d.notes[p.id] : b.notes[p.id];
+    o.incl[p.id] = d && d.incl && typeof d.incl[p.id] === "boolean" ? d.incl[p.id] : b.incl[p.id];
+  });
+  return o;
+}
+function stash() {
+  const d = YEARS[S.year] = { sheets:{}, coef:S.coef, notes:S.notes, incl:S.incl, bilan:S.bilan };
+  PERSON_SHEETS.forEach((n) => { d.sheets[n] = book.sheets[n]; });
+}
+function activate(y) {
+  if (!YEARS[y]) YEARS[y] = y === BASE_YEAR ? baseDefault() : blankYear(y);
+  const d = YEARS[y];
+  PERSON_SHEETS.forEach((n) => { book.sheets[n] = d.sheets[n]; });
+  S.coef = d.coef; S.notes = d.notes; S.incl = d.incl; S.bilan = d.bilan; S.year = y;
+  if (y === BASE_YEAR) book.sheets.Total = TOTAL_SHEET; else delete book.sheets.Total;
+  book.astCache.clear(); book.valCache.clear(); prevCache = {}; curMonth = calcCurMonth(y);
+}
+const yearsList = () => Object.keys(YEARS).map(Number).sort((a, b) => a - b);
+function payload() { stash(); return { v:2, year:S.year, years:YEARS, goal:S.goal, theme:S.theme, refRules:Object.fromEntries(yearsList().map((y) => [y, refFrom(y)])) }; }
+function applyPayload(j) {
+  if (!j || (j.v !== 1 && j.v !== 2)) throw new Error("Fichier non reconnu");
+  Object.keys(YEARS).forEach((k) => delete YEARS[k]);
+  if (j.v === 1) {
+    YEARS[BASE_YEAR] = fixYear(BASE_YEAR, { sheets:j.sheets, coef:j.coef, notes:j.notes, incl:j.incl, bilan:j.bilan });
+    S.refRules = {};
+  } else {
+    Object.keys(j.years || {}).forEach((k) => { const y = +k; if (y >= 2000 && y < 2200) YEARS[y] = fixYear(y, j.years[k]); });
+    if (!YEARS[BASE_YEAR]) YEARS[BASE_YEAR] = baseDefault();
+    S.goal = j.goal && typeof j.goal === "object" ? j.goal : {};
+    S.refRules = j.refRules && typeof j.refRules === "object" ? j.refRules : {};
+  }
+  if (j.theme) S.theme = j.theme;
+  S.cmp = {};
+  activate(j.v === 2 && YEARS[j.year] ? j.year : BASE_YEAR);
+}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(payload())); } catch (e) { /* stockage indisponible */ } }
+function load() {
+  try {
+    const t = localStorage.getItem(KEY) || localStorage.getItem(LEGACY_KEY);
+    if (t) { applyPayload(JSON.parse(t)); return; }
+  } catch (e) { /* données absentes ou illisibles */ }
+  if (!YEARS[S.year]) activate(BASE_YEAR);
+}
+load();
+applyTheme();
+
+function switchYear(y) { stash(); activate(y); S.month = lastDataMonth(); S.fx.m = S.month; S.pdMonth = null; S.cmp = {}; save(); render(false); }
+function addYear(y) {
+  if (!Number.isInteger(y) || y < 2000 || y > 2100) { toast("Année non valide."); return; }
+  if (YEARS[y]) { toast("Cette année existe déjà."); return; }
+  stash(); YEARS[y] = blankYear(y); switchYear(y); toast("Année " + y + " créée");
+}
+function removeYear(y) {
+  if (y === BASE_YEAR || !YEARS[y]) return;
+  if (!window.confirm("Supprimer définitivement les chiffres de " + y + " ?")) return;
+  stash(); const wasActive = y === S.year; delete YEARS[y]; delete S.goal[y]; prevCache = {};
+  if (wasActive) { activate(BASE_YEAR); S.month = lastDataMonth(); S.fx.m = S.month; S.cmp = {}; }
+  save(); render(false); toast("Année supprimée");
+}
+
+/* =====================================================================
+   2. Lecture des chiffres
+   ===================================================================== */
+const numOf = (v) => (typeof v === "number" && Number.isFinite(v) ? v : null);
+function cellRef(p, f, m) { const c = LAY[p.layout][f]; return c ? c + (m + 2) : null; }
+const live = () => ({ book, coef:S.coef, incl:S.incl, year:S.year });
+/* Contexte d'une autre année (lecture seule) pour les comparaisons N-1 */
+function ctxOf(y) {
+  if (y === S.year) return live();
+  if (!YEARS[y]) return null;
+  if (!prevCache[y]) {
+    const bk = new XL.Book([]), sh = {};
+    PERSON_SHEETS.forEach((n) => { sh[n] = YEARS[y].sheets[n]; });
+    if (y === BASE_YEAR) sh.Total = TOTAL_SHEET;
+    bk.sheets = sh;
+    prevCache[y] = { book:bk, coef:YEARS[y].coef, incl:YEARS[y].incl, year:y };
+  }
+  return prevCache[y];
+}
+const prevCtx = () => ctxOf(S.year - 1);
+function pm(p, m, ctx) {
+  const c = ctx || live(), L = LAY[p.layout];
+  const g = (f) => { const r = cellRef(p, f, m); return r ? numOf(c.book.value(p.id, r)) : null; };
+  const tot = g("tot");
+  return {
+    mail: g("mail") || 0, ech: g("ech") || 0, cli: L.cli ? g("cli") || 0 : 0, urg: L.urg ? g("urg") || 0 : 0,
+    tot: tot || 0, jours: g("jours"), abs: g("abs") || 0, moy: g("moy"), prod: g("prod"),
+    coef: c.coef[p.id][m], has: (tot || 0) > 0
+  };
+}
+const adjOf = (x) => (x.has && x.prod !== null ? x.prod * x.coef : null);
+
+function vol(m, ctx) {
+  const c = ctx || live(), t = { mail:0, ech:0, cli:0, urg:0 };
+  PEOPLE.forEach((p) => { if (!c.incl[p.id]) return; const x = pm(p, m, c); t.mail += x.mail; t.ech += x.ech; t.cli += x.cli; t.urg += x.urg; });
+  t.tot = t.mail + t.ech; return t;
+}
+function adjList(m, ctx) { const c = ctx || live(); return PEOPLE.map((p) => { const x = pm(p, m, c); return { p, x, adj:adjOf(x) }; }).filter((r) => r.adj !== null && r.adj > 0); }
+function cadence(m, ctx) { return adjList(m, ctx).reduce((s, r) => s + r.adj, 0); }
+function refAvg(m, ctx) { const c = ctx || live(), l = adjList(m, c).filter((r) => refIncluded(r.p.id, m, c.year)); return l.length ? l.reduce((s, r) => s + r.adj, 0) / l.length : null; }
+function refYtd(ctx) { const l = []; for (let m = 0; m < 12; m++) { const r = refAvg(m, ctx); if (r !== null) l.push(r); } return l.length ? { v:l.reduce((t, x) => t + x, 0) / l.length, n:l.length } : null; }
+function personAvg(p, ctx) { const l = []; for (let m = 0; m < 12; m++) { const x = pm(p, m, ctx); if (x.has && x.prod !== null) l.push(x.prod); } return l.length ? l.reduce((s, v) => s + v, 0) / l.length : null; }
+function lastDataMonth(ctx) { for (let m = 11; m >= 0; m--) if (PEOPLE.some((p) => pm(p, m, ctx).has)) return m; return 0; }
+
+/* =====================================================================
+   3. Utilitaires d'affichage
+   ===================================================================== */
+function inkFor(hex) {
+  const c = [1, 3, 5].map((i) => parseInt(hex.substr(i, 2), 16) / 255).map((v) => (v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4)));
+  return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2] > 0.4 ? "#12202C" : "#FFFFFF";
+}
+const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
+const nfs = {};
+const nf = (d) => nfs[d] || (nfs[d] = new Intl.NumberFormat("fr-FR", { minimumFractionDigits:d, maximumFractionDigits:d }));
+const fmt = (v, d = 0) => (v === null || v === undefined || Number.isNaN(v) ? "—" : nf(d).format(v));
+const fmtG = (v) => (v === null || v === undefined ? "—" : new Intl.NumberFormat("fr-FR", { maximumFractionDigits:2 }).format(v));
+const $ = (s, r) => (r || document).querySelector(s);
+const parseNum = (s) => { const t = String(s).replace(/\s/g, "").replace(",", "."); if (t === "") return undefined; const n = Number(t); return Number.isNaN(n) ? null : n; };
+function deltaTxt(cur, prev, label) {
+  if (!cur || !prev) return "";
+  const d = ((cur - prev) / prev) * 100;
+  return "<span class=\"dl " + (d >= 0 ? "pos" : "neg") + "\">" + (d >= 0 ? "+" : "−") + fmt(Math.abs(d), 1) + " %</span> " + label;
+}
+function delta(cur, prev) { return deltaTxt(cur, prev, "par rapport à " + MONTHS[S.month - 1].toLowerCase()); }
+const pctCh = (a, b) => (a ? (b / a - 1) * 100 : null);let toastT;
+function toast(msg) { const t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, 2200); }
+function applyTheme() { const r = document.documentElement; if (S.theme === "auto") r.removeAttribute("data-theme"); else r.setAttribute("data-theme", S.theme); }
+
+const INFO = {
+  totYtd:"Somme des mails et des échanges traités par toute l'équipe depuis janvier.",
+  totMois:"Mails et échanges traités ce mois-ci, toute l'équipe confondue.",
+  cadence:"Somme de la productivité ajustée de chaque personne ce mois-ci : ce que l'équipe traite par jour, tous ensemble.",
+  refMoy:"Moyenne des productivités ajustées de l'équipe (certaines personnes peuvent en être exclues). Sert de repère pour comparer une personne à l'équipe.",
+  chartVol:"Le nombre de mails et d'échanges traités chaque mois, empilés par type.",
+  chartProd:"La productivité de chaque personne (total ÷ jours de présence), mois par mois. Cliquez un nom pour l'afficher ou le masquer.",
+  chartRef:"L'évolution de la moyenne de référence de l'équipe, mois par mois. Les pointillés montrent la moyenne depuis janvier.",
+  heat:"La part de chacun dans la cadence de l'équipe, mois par mois. Chaque ligne fait 100 % : plus la case est verte, plus la part est grande ce mois-là.",
+  share:"La productivité ajustée de chacun, rapportée à la cadence totale de l'équipe du mois : la somme des parts fait 100 %.",
+  pTotal:"Mails et échanges traités par la personne, sur les mois saisis.",
+  pProd:"Total ÷ (jours du mois − absences) : le rythme de traitement un jour de présence, sans compter les jours d'absence.",
+  pBest:"Le mois où la productivité par jour de présence a été la plus élevée.",
+  pAbs:"Nombre de jours d'absence saisis sur l'année.",
+  bGap:"Écart entre la productivité ajustée de la personne et la moyenne de référence de l'équipe, sur les mêmes mois.",
+  bCmp:"Compare la première moitié des mois saisis à la seconde, pour voir si la personne progresse, régresse ou reste stable dans le temps.",
+  cMail:"Nombre de mails traités par la personne dans le mois.",
+  cEch:"Nombre d'échanges traités par la personne dans le mois.",
+  cCli:"Échanges avec les clients, comptés depuis le 14/09.",
+  cUrg:"Urgences traitées, comptées depuis le 14/09.",
+  cTot:"Mails + échanges du mois (avec les échanges clients et les urgences à partir de septembre).",
+  cJours:"Nombre de jours ouvrés du mois, avant déduction des absences.",
+  cAbs:"Jours d'absence saisis pour ce mois. Ils sont retirés des jours de présence.",
+  cProd:"Total traité ÷ (jours du mois − absences) : le rythme un jour de présence.",
+  cAdj:"Productivité par jour de présence × coefficient de majoration du mois (1 = aucune majoration).",
+  cRef:"Moyenne des productivités ajustées de l'équipe ce mois-là, hors Pierrick et Virginie, Régis à partir de juillet.",
+  cGap:"Écart entre la productivité ajustée de la personne et la moyenne de référence. Dans la dernière colonne, il se compte en points.",
+  cPres:"Jours du mois − absences : le nombre de jours réellement travaillés.",
+  cEvo:"Variation entre le premier et le dernier mois choisis : en % pour la plupart des lignes, en points pour l'écart avec l'équipe.",
+  proj:"Volume annuel estimé : ce qui est déjà traité, plus le rythme par jour ouvré de la base choisie multiplié par les jours ouvrés restants (jours fériés français déduits). Le dernier mois saisi est considéré comme complet.",
+  classement:"Les personnes du mois triées par productivité ajustée, de la plus forte à la plus faible.",
+};
+function info(key) { return INFO[key] ? "<button type=\"button\" class=\"ih\" data-info=\"" + key + "\" aria-label=\"Qu'est-ce que c'est ?\" aria-expanded=\"false\">?</button>" : ""; }
+let infoOpenBtn = null;
+function closeInfo() {
+  const pop = document.getElementById("infopop"); if (pop) pop.remove();
+  if (infoOpenBtn) infoOpenBtn.setAttribute("aria-expanded", "false");
+  infoOpenBtn = null;
+}
+document.addEventListener("click", (e) => {
+  const b = e.target.closest(".ih");
+  if (b) {
+    const key = b.dataset.info, wasOpen = infoOpenBtn === b;
+    closeInfo();
+    if (wasOpen || !INFO[key]) return;
+    const pop = document.createElement("div");
+    pop.id = "infopop"; pop.className = "infopop"; pop.setAttribute("role", "tooltip"); pop.textContent = INFO[key];
+    document.body.appendChild(pop);
+    const r = b.getBoundingClientRect(), pr = pop.getBoundingClientRect();
+    let x = r.left, y = r.bottom + 8;
+    if (x + pr.width > window.innerWidth - 8) x = window.innerWidth - pr.width - 8;
+    if (y + pr.height > window.innerHeight - 8) y = r.top - pr.height - 8;
+    pop.style.left = Math.max(8, x) + "px"; pop.style.top = Math.max(8, y) + "px";
+    b.setAttribute("aria-expanded", "true"); infoOpenBtn = b;
+    return;
+  }
+  if (!e.target.closest("#infopop")) closeInfo();
+});
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeInfo(); });
+window.addEventListener("resize", closeInfo);
+
+const ICON = {
+  dash:"<svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"3\" y=\"3\" width=\"7\" height=\"9\" rx=\"1.5\"/><rect x=\"14\" y=\"3\" width=\"7\" height=\"5\" rx=\"1.5\"/><rect x=\"14\" y=\"12\" width=\"7\" height=\"9\" rx=\"1.5\"/><rect x=\"3\" y=\"16\" width=\"7\" height=\"5\" rx=\"1.5\"/></svg>",
+  team:"<svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"9\" cy=\"8\" r=\"3.5\"/><path d=\"M2.5 20c.6-3.6 3.2-5.5 6.5-5.5s5.9 1.9 6.5 5.5\"/><path d=\"M16 4.6a3.5 3.5 0 0 1 0 6.8M18.5 14.9c1.7.8 2.7 2.4 3 5.1\"/></svg>",
+  doc:"<svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z\"/><path d=\"M14 3v5h5M9 13h6M9 17h6\"/></svg>",
+  gear:"<svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"3\"/><path d=\"M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z\"/></svg>"
+};
+
+/* =====================================================================
+   4. Graphiques SVG (sans bibliothèque)
+   ===================================================================== */
+const charts = [];
+function mount(el, draw) { charts.push({ el, draw }); draw(el); }
+let rzT; window.addEventListener("resize", () => { clearTimeout(rzT); rzT = setTimeout(() => charts.forEach((c) => { if (document.body.contains(c.el)) c.draw(c.el); }), 120); });
+let printMode = false;
+const cw = (el) => (printMode ? +el.dataset.pw || 660 : Math.max(300, el.clientWidth || 640));
+const chH = (el, h) => (printMode && el.dataset.ph ? +el.dataset.ph : h);
+function redrawAll() { charts.forEach((c) => { if (document.body.contains(c.el)) c.draw(c.el); }); }
+window.addEventListener("beforeprint", () => { printMode = true; redrawAll(); });
+window.addEventListener("afterprint", () => { printMode = false; redrawAll(); });
+let titleBak = "";
+window.addEventListener("beforeprint", () => { titleBak = document.title; const r = route(); if (document.body.classList.contains("print-cmp")) document.title = "Comparaison de mois " + S.year + " - " + r.id; else if (r.name === "bilan") document.title = "Bilan annuel " + S.year + " - " + r.id; else if (r.name === "rapport") document.title = "Rapport productivité " + MONTHS[S.month] + " " + S.year; });
+window.addEventListener("afterprint", () => { if (titleBak) document.title = titleBak; document.body.classList.remove("print-cmp"); });
+function niceMax(v) { if (v <= 0) return 10; const e = Math.pow(10, Math.floor(Math.log10(v))), f = v / e; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * e; }
+const attr = (s) => esc(s);
+function tipHtml(title, rows) { return "<b>" + esc(title) + "</b>" + rows.map((r) => "<div><i style=\"--c:" + r.c + "\"></i>" + esc(r.n) + "<span>" + esc(r.v) + "</span></div>").join(""); }
+
+function drawStacked(el, cfg) {
+  const W = cw(el), H = chH(el, cfg.height || 260), ml = 46, mr = 8, mt = 12, mb = 28, pw = W - ml - mr, ph = H - mt - mb, n = cfg.labels.length, band = pw / n;
+  const totals = cfg.labels.map((_, i) => cfg.series.reduce((s, x) => s + (x.vals[i] || 0), 0));
+  const max = niceMax(Math.max.apply(null, totals.concat([1])));
+  const y = (v) => mt + ph - (v / max) * ph;
+  let s = "<svg viewBox=\"0 0 " + W + " " + H + "\" role=\"img\" aria-label=\"" + attr(cfg.aria) + "\">";
+  for (let k = 0; k <= 4; k++) { const v = (max / 4) * k, yy = y(v); s += "<line class=\"gl\" x1=\"" + ml + "\" x2=\"" + (W - mr) + "\" y1=\"" + yy + "\" y2=\"" + yy + "\"/><text x=\"" + (ml - 8) + "\" y=\"" + (yy + 4) + "\" text-anchor=\"end\">" + fmt(v, v % 1 ? 1 : 0) + "</text>"; }
+  if (cfg.sel !== undefined && cfg.sel !== null) s += "<rect class=\"selb\" x=\"" + (ml + band * cfg.sel) + "\" y=\"" + mt + "\" width=\"" + band + "\" height=\"" + ph + "\" rx=\"6\"/>";
+  const bw = Math.min(38, band * 0.62);
+  cfg.labels.forEach((lb, i) => {
+    let acc = 0; const x0 = ml + band * i + (band - bw) / 2;
+    cfg.series.forEach((sr) => { const v = sr.vals[i] || 0; if (v <= 0) return; const h = (v / max) * ph; s += "<rect x=\"" + x0 + "\" y=\"" + (y(acc + v)) + "\" width=\"" + bw + "\" height=\"" + Math.max(h, 0.5) + "\" style=\"fill:" + sr.color + "\"/>"; acc += v; });
+    s += "<text x=\"" + (ml + band * (i + 0.5)) + "\" y=\"" + (H - 8) + "\" text-anchor=\"middle\"" + (i === cfg.sel ? " style=\"font-weight:700;fill:var(--ink)\"" : "") + ">" + (band < 30 ? lb[0] : lb) + "</text>";
+    const rows = cfg.series.filter((sr) => (sr.vals[i] || 0) > 0).map((sr) => ({ c:sr.color, n:sr.name, v:fmt(sr.vals[i]) }));
+    if (rows.length > 1) rows.push({ c:"transparent", n:"Total", v:fmt(totals[i]) });
+    s += "<rect class=\"hit\" x=\"" + (ml + band * i) + "\" y=\"" + mt + "\" width=\"" + band + "\" height=\"" + ph + "\" rx=\"6\"" + (cfg.pick ? " data-pick=\"" + i + "\" style=\"cursor:pointer\"" : "") + " data-tip=\"" + attr(tipHtml((cfg.tips || MONTHS)[i], rows.length ? rows : [{ c:"transparent", n:"Aucune donnée", v:"" }])) + "\"/>";
+  });
+  el.innerHTML = s + "</svg>";
+}
+
+function drawLine(el, cfg) {
+  const W = cw(el), H = chH(el, cfg.height || 280), ml = 46, mr = 12, mt = 12, mb = 28, pw = W - ml - mr, ph = H - mt - mb, n = cfg.labels.length, band = pw / n;
+  const vis = cfg.series;
+  const all = []; vis.forEach((sr) => sr.vals.forEach((v) => { if (v !== null && v !== undefined) all.push(v); }));
+  const max = niceMax(Math.max.apply(null, all.concat([1])) * 1.02);
+  const y = (v) => mt + ph - (v / max) * ph, x = (i) => ml + band * (i + 0.5);
+  let s = "<svg viewBox=\"0 0 " + W + " " + H + "\" role=\"img\" aria-label=\"" + attr(cfg.aria) + "\">";
+  for (let k = 0; k <= 4; k++) { const v = (max / 4) * k, yy = y(v); s += "<line class=\"gl\" x1=\"" + ml + "\" x2=\"" + (W - mr) + "\" y1=\"" + yy + "\" y2=\"" + yy + "\"/><text x=\"" + (ml - 8) + "\" y=\"" + (yy + 4) + "\" text-anchor=\"end\">" + fmt(v, v % 1 ? 1 : 0) + "</text>"; }
+  if (cfg.sel !== undefined && cfg.sel !== null) s += "<rect class=\"selb\" x=\"" + (ml + band * cfg.sel) + "\" y=\"" + mt + "\" width=\"" + band + "\" height=\"" + ph + "\" rx=\"6\"/>";
+  cfg.labels.forEach((lb, i) => { s += "<text x=\"" + x(i) + "\" y=\"" + (H - 8) + "\" text-anchor=\"middle\"" + (i === cfg.sel ? " style=\"font-weight:700;fill:var(--ink)\"" : "") + ">" + (band < 30 ? lb[0] : lb) + "</text>"; });
+  vis.forEach((sr) => {
+    let d = "", pen = false;
+    sr.vals.forEach((v, i) => { if (v === null || v === undefined) { pen = false; return; } d += (pen ? "L" : "M") + x(i).toFixed(1) + " " + y(v).toFixed(1); pen = true; });
+    s += "<path d=\"" + d + "\" fill=\"none\" style=\"stroke:" + sr.color + "\" stroke-width=\"2.4\" stroke-linejoin=\"round\" stroke-linecap=\"round\"" + (sr.dash ? " stroke-dasharray=\"" + (sr.dash === true ? "5 4" : sr.dash) + "\"" : "") + "/>";
+    if (!sr.noDots) sr.vals.forEach((v, i) => { if (v === null || v === undefined) return; s += "<circle cx=\"" + x(i).toFixed(1) + "\" cy=\"" + y(v).toFixed(1) + "\" r=\"3.8\" style=\"fill:" + sr.color + ";stroke:var(--panel)\" stroke-width=\"1.6\"/>"; });
+  });
+  cfg.labels.forEach((lb, i) => {
+    const rows = vis.filter((sr) => sr.vals[i] !== null && sr.vals[i] !== undefined).sort((a, b) => b.vals[i] - a.vals[i]).map((sr) => ({ c:sr.color, n:sr.name, v:fmt(sr.vals[i], cfg.dec === undefined ? 1 : cfg.dec) }));
+    s += "<rect class=\"hit\" x=\"" + (ml + band * i) + "\" y=\"" + mt + "\" width=\"" + band + "\" height=\"" + ph + "\" rx=\"6\"" + (cfg.pick ? " data-pick=\"" + i + "\" style=\"cursor:pointer\"" : "") + " data-tip=\"" + attr(tipHtml((cfg.tips || MONTHS)[i], rows.length ? rows : [{ c:"transparent", n:"Aucune donnée", v:"" }])) + "\"/>";
+  });
+  el.innerHTML = s + "</svg>";
+}
+
+/* Info-bulle */
+const tipEl = $("#tip");
+document.addEventListener("pointermove", (e) => {
+  const t = e.target.closest && e.target.closest("[data-tip]");
+  if (!t) { tipEl.hidden = true; return; }
+  tipEl.innerHTML = t.getAttribute("data-tip"); tipEl.hidden = false;
+  const r = tipEl.getBoundingClientRect(); let x = e.clientX + 14, yy = e.clientY + 14;
+  if (x + r.width > window.innerWidth - 8) x = e.clientX - r.width - 14;
+  if (yy + r.height > window.innerHeight - 8) yy = e.clientY - r.height - 14;
+  tipEl.style.left = Math.max(8, x) + "px"; tipEl.style.top = Math.max(8, yy) + "px";
+});
+document.addEventListener("pointerleave", () => { tipEl.hidden = true; }, true);
+
+/* =====================================================================
+   5. Navigation
+   ===================================================================== */
+function route() {
+  const h = location.hash.replace(/^#\/?/, "").split("/");
+  if (h[0] === "personne" && h[1] && P(decodeURIComponent(h[1]))) return { name:"personne", id:decodeURIComponent(h[1]) };
+  if (h[0] === "bilan" && h[1] && P(decodeURIComponent(h[1]))) return { name:"bilan", id:decodeURIComponent(h[1]) };
+  if (["equipe", "formules", "rapport", "reglages"].includes(h[0])) return { name:h[0] };
+  return { name:"dashboard" };
+}
+const href = (r) => "#/" + r;
+const pHref = (id) => "#/personne/" + encodeURIComponent(id);
+const bHref = (id) => "#/bilan/" + encodeURIComponent(id);
+const norm = (s) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+function searchIndex() {
+  const idx = [
+    { label:"Tableau de bord", sub:"Vue d'ensemble du mois", href:"#/", kind:"page" },
+    { label:"Équipe", sub:"Vue d'ensemble et volumes", href:href("equipe"), kind:"page" },
+    { label:"Formules", sub:"Le détail des calculs", href:href("formules"), kind:"page" },
+    { label:"Rapport", sub:"Rapport mensuel à imprimer", href:href("rapport"), kind:"page" },
+    { label:"Réglages", sub:"Thème, sauvegarde, import", href:href("reglages"), kind:"page" }
+  ];
+  PEOPLE.forEach((p) => {
+    idx.push({ label:p.id, sub:"Fiche mensuelle", href:pHref(p.id), kind:"person", color:p.color });
+    idx.push({ label:"Bilan de " + p.id, sub:"Synthèse annuelle pour l'entretien", href:bHref(p.id), kind:"person", color:p.color });
+  });
+  MONTHS.forEach((mn, m) => idx.push({ label:mn, sub:"Sélectionner ce mois sur le tableau de bord", href:"#/", kind:"month", m }));
+  return idx;
+}
+function qsHide() { const l = document.getElementById("qsList"); if (l) { l.hidden = true; l.innerHTML = ""; } }
+function qsShow(q) {
+  const l = document.getElementById("qsList"); if (!l) return;
+  const nq = norm(q.trim());
+  if (!nq) { qsHide(); return; }
+  const res = searchIndex().filter((it) => norm(it.label).includes(nq) || (it.sub && norm(it.sub).includes(nq))).slice(0, 8);
+  window.__qsRes = res;
+  if (!res.length) { l.hidden = false; l.innerHTML = "<p class=\"qsEmpty\">Aucun résultat</p>"; return; }
+  l.innerHTML = res.map((it, i) => "<button type=\"button\" class=\"qsItem\" data-i=\"" + i + "\">" + (it.color ? "<i style=\"--c:" + it.color + "\"></i>" : "<i class=\"qsdot\"></i>") + "<span><b>" + esc(it.label) + "</b><small>" + esc(it.sub) + "</small></span></button>").join("");
+  l.hidden = false;
+}
+let qsBound = false;
+function bindSearch() {
+  if (qsBound) return; qsBound = true;
+  const side = $("#side");
+  side.addEventListener("input", (e) => { if (e.target.id === "qsInput") qsShow(e.target.value); });
+  side.addEventListener("focusin", (e) => { if (e.target.id === "qsInput" && e.target.value) qsShow(e.target.value); });
+  side.addEventListener("keydown", (e) => {
+    if (e.target.id !== "qsInput") return;
+    if (e.key === "Escape") { e.target.value = ""; qsHide(); e.target.blur(); }
+    else if (e.key === "Enter") { const first = side.querySelector(".qsItem"); if (first) first.click(); }
+  });
+  side.addEventListener("click", (e) => {
+    const b = e.target.closest(".qsItem"); if (!b) return;
+    const res = window.__qsRes, it = res && res[+b.dataset.i]; if (!it) return;
+    if (it.kind === "month") { S.month = it.m; if (route().name === "dashboard") render(true); else location.hash = "#/"; }
+    else location.hash = it.href;
+    qsHide();
+  });
+  document.addEventListener("click", (e) => { if (!e.target.closest(".qs")) qsHide(); });
+}
+function renderSide(r) {
+  const cur = (n) => (r.name === n ? " aria-current=\"page\"" : "");
+  const person = (p) => "<a class=\"nv\" href=\"" + pHref(p.id) + "\"" + ((r.name === "personne" || r.name === "bilan") && r.id === p.id ? " aria-current=\"page\"" : "") + "><i class=\"pd\" style=\"--c:" + p.color + "\"></i>" + esc(p.id) + "</a>";
+  $("#side").innerHTML =
+    "<a class=\"brand\" href=\"#/\"><svg width=\"32\" height=\"32\" viewBox=\"0 0 32 32\" aria-hidden=\"true\"><rect width=\"32\" height=\"32\" rx=\"8\" fill=\"#1B2B3B\"/><rect x=\"6\" y=\"14\" width=\"4.5\" height=\"12\" rx=\"1.5\" fill=\"#4DD0E1\"/><rect x=\"13.75\" y=\"7\" width=\"4.5\" height=\"19\" rx=\"1.5\" fill=\"#63D297\"/><rect x=\"21.5\" y=\"11\" width=\"4.5\" height=\"15\" rx=\"1.5\" fill=\"#F7CB4D\"/></svg><span><b>Productivité</b><small>EASY " + String(S.year).slice(2) + "</small></span></a>" +
+    "<div class=\"yr\"><label class=\"sr\" for=\"yearSel\">Année</label><select id=\"yearSel\" data-bind=\"year\">" + yearsList().map((y) => "<option value=\"" + y + "\"" + (y === S.year ? " selected" : "") + ">Année " + y + "</option>").join("") + "</select></div>" +
+    "<nav class=\"navs\" aria-label=\"Navigation principale\">" +
+    "<a class=\"nv\" href=\"#/\"" + cur("dashboard") + ">" + ICON.dash + "Tableau de bord</a>" +
+    "<a class=\"nv\" href=\"" + href("equipe") + "\"" + cur("equipe") + ">" + ICON.team + "Équipe</a>" +
+    "<a class=\"nv\" href=\"" + href("formules") + "\"" + cur("formules") + "><span class=\"fxm\">fx</span>Formules</a>" +
+    "<a class=\"nv\" href=\"" + href("rapport") + "\"" + cur("rapport") + ">" + ICON.doc + "Rapport</a>" +
+    "<div class=\"qs\"><input type=\"search\" id=\"qsInput\" placeholder=\"Rechercher une personne, une page…\" aria-label=\"Recherche rapide\" autocomplete=\"off\"><div class=\"qsList\" id=\"qsList\" hidden></div></div>" +
+    "<div class=\"grp\">Personnes</div>" + PEOPLE.filter((p) => !p.hidden).map(person).join("") +
+    "<div class=\"grp\">Masquées dans Excel</div>" + PEOPLE.filter((p) => p.hidden).map(person).join("") +
+    "<div class=\"grp\">Application</div>" +
+    "<a class=\"nv\" href=\"" + href("reglages") + "\"" + cur("reglages") + ">" + ICON.gear + "Réglages</a></nav>";
+  bindSearch();
+}
+
+/* =====================================================================
+   6. Vues
+   ===================================================================== */
+function monthPicker() {
+  return "<div class=\"mp\"><button type=\"button\" class=\"ib\" data-action=\"mprev\" aria-label=\"Mois précédent\">‹</button><select data-bind=\"month\" aria-label=\"Mois affiché\">" +
+    MONTHS.map((n, i) => "<option value=\"" + i + "\"" + (i === S.month ? " selected" : "") + ">" + n + (i === curMonth ? " (en cours)" : "") + "</option>").join("") +
+    "</select><button type=\"button\" class=\"ib\" data-action=\"mnext\" aria-label=\"Mois suivant\">›</button></div>";
+}
+function legendVol(v) {
+  const it = [["Mails", "--c-mail"], ["Échanges", "--c-ech"]];
+  if (v && v.cli) it.push(["Échanges clients", "--c-cli"]);
+  if (v && v.urg) it.push(["Urgences", "--c-urg"]);
+  return "<div class=\"lg\">" + it.map((x) => "<span><i style=\"--c:var(" + x[1] + ")\"></i>" + x[0] + "</span>").join("") + "</div>";
+}
+function yearVolSeries(getter) {
+  const a = { mail:[], ech:[], cli:[], urg:[] };
+  for (let m = 0; m < 12; m++) { const v = getter(m); a.mail.push(v.mail); a.ech.push(v.ech); a.cli.push(v.cli); a.urg.push(v.urg); }
+  const out = [{ name:"Mails", color:"var(--c-mail)", vals:a.mail }, { name:"Échanges", color:"var(--c-ech)", vals:a.ech }];
+  if (a.cli.some((v) => v > 0)) out.push({ name:"Échanges clients", color:"var(--c-cli)", vals:a.cli });
+  if (a.urg.some((v) => v > 0)) out.push({ name:"Urgences", color:"var(--c-urg)", vals:a.urg });
+  return out;
+}
+
+function drawRef(el, sel, opts) {
+  const ry = refYtd(), pc = prevCtx(), o = opts || {}, p1 = pc && M3.some((_, k) => refAvg(k, pc) !== null);
+  drawLine(el, { labels:M3, sel, pick:!o.noPick, height:o.height || 240, aria:"Moyenne de référence par mois", series:[
+    { name:"Moyenne du mois", color:"var(--brand)", vals:M3.map((_, k) => refAvg(k)) }
+  ].concat(ry ? [{ name:"Depuis janvier", color:"var(--muted)", dash:true, noDots:true, vals:M3.map((_, k) => (refAvg(k) !== null ? ry.v : null)) }] : [])
+   .concat(p1 ? [{ name:String(S.year - 1), color:"var(--c-ech)", dash:"2 3", noDots:true, vals:M3.map((_, k) => refAvg(k, pc)) }] : []) });
+}
+/* ---------- Projection de fin d'année ---------- */
+function projData() {
+  const y = S.year, lm = lastDataMonth();
+  if (!PEOPLE.some((p) => pm(p, lm).has)) return null;
+  const wd = (m) => workingDays(y, m), act = [];
+  for (let m = 0; m < 12; m++) act.push(vol(m).tot);
+  const done = act.slice(0, lm + 1).reduce((s, v) => s + v, 0), remM = [];
+  for (let m = lm + 1; m < 12; m++) remM.push(m);
+  const remD = remM.reduce((s, m) => s + wd(m), 0);
+  const rate = (n) => { let v = 0, d = 0; for (let m = Math.max(0, lm - n + 1); m <= lm; m++) if (act[m] > 0) { v += act[m]; d += wd(m); } return d ? v / d : null; };
+  const bases = [{ k:"last3", l:"3 derniers mois", r:rate(3) }, { k:"last6", l:"6 derniers mois", r:rate(6) }, { k:"ytd", l:"Depuis janvier", r:rate(12) }];
+  bases.forEach((b) => { b.proj = b.r === null ? null : done + b.r * remD; });
+  const sel = bases.find((b) => b.k === S.proj.base) || bases[2];
+  const goal = typeof S.goal[y] === "number" ? S.goal[y] : null;
+  const need = goal !== null && remD > 0 ? Math.max(goal - done, 0) / remD : null;
+  const pc = prevCtx(); let prevTot = null, prevCum = null;
+  if (pc) { let t = 0; prevCum = []; for (let m = 0; m < 12; m++) { t += vol(m, pc).tot; prevCum.push(t); } prevTot = t || null; if (!prevTot) prevCum = null; }
+  return { y, lm, wd, act, done, remM, remD, bases, sel, goal, need, prevTot, prevCum };
+}
+function projPanel() {
+  const head = (extra) => `<div class="phd"><div><h2>Projection de fin d'année${info("proj")}</h2><p class="sub">Si l'équipe garde le rythme par jour ouvré de la base choisie.</p></div>${extra || ""}</div>`;
+  const d = projData();
+  if (!d) return { html:`<section class="panel" style="margin-top:16px">${head()}<p class="empty">Saisissez des chiffres pour obtenir une projection.</p></section>`, mount() {} };
+  if (!d.remM.length) return { html:`<section class="panel" style="margin-top:16px">${head()}<p class="empty">Tous les mois de ${d.y} sont saisis : le total de l'année est de ${fmt(d.done)}.</p></section>`, mount() {} };
+  const sel = d.sel, projTot = sel.proj, lmn = MONTHS[d.lm].toLowerCase();
+  const picker = `<div class="mp"><select data-bind="projBase" aria-label="Base du calcul">${d.bases.map((b) => `<option value="${b.k}"${b.k === sel.k ? " selected" : ""}>Base : ${b.l.toLowerCase()}</option>`).join("")}</select></div>`;
+  const k4 = d.goal !== null
+    ? `<div class="kpi"><span class="kl">Objectif annuel</span><span class="kv">${fmt(d.goal)}</span><span class="ks">${deltaTxt(projTot, d.goal, "projeté vs objectif")}</span><span class="ks">Rythme nécessaire : <b>${fmt(d.need, 0)}</b> par jour (retenu : ${fmt(sel.r, 0)})</span></div>`
+    : `<div class="kpi"><span class="kl">Rythme retenu</span><span class="kv">${fmt(sel.r, 0)}<small>/ jour ouvré</small></span><span class="ks">Équipe, base : ${sel.l.toLowerCase()}</span></div>`;
+  const kpis = `<section class="strip">` +
+    `<div class="kpi"><span class="kl">Total projeté fin ${d.y}</span><span class="kv">${fmt(projTot)}</span><span class="ks">dont ${fmt(d.done)} déjà traités</span>${d.prevTot ? `<span class="ks">${deltaTxt(projTot, d.prevTot, "vs total " + (d.y - 1))}</span>` : ""}</div>` +
+    `<div class="kpi"><span class="kl">Déjà traité</span><span class="kv">${fmt(d.done)}</span><span class="ks">${d.lm + 1} mois saisis, jusqu'à ${lmn}</span></div>` +
+    `<div class="kpi"><span class="kl">Reste à traiter (projeté)</span><span class="kv">${fmt(sel.r * d.remD)}</span><span class="ks">${d.remD} jours ouvrés restants (${d.remM.length} mois)</span></div>` + k4 + `</section>`;
+  const rows = d.bases.map((b) => `<tr style="${b.k === sel.k ? "font-weight:700" : ""}"><td>${b.l}</td><td>${fmt(b.r, 0)}</td><td>${fmt(b.proj)}</td>${d.prevTot ? `<td>${b.proj ? deltaTxt(b.proj, d.prevTot, "") : "—"}</td>` : ""}</tr>`).join("");
+  const html = `<section class="panel" style="margin-top:16px">${head(picker)}${kpis}
+    <div class="g2" style="margin-top:16px"><div><div class="lg" style="margin-bottom:6px"><span><i style="--c:var(--brand)"></i>Réalisé</span><span><i style="--c:var(--muted)"></i>Projection</span>${d.prevCum ? `<span><i style="--c:var(--c-ech)"></i>${d.y - 1}</span>` : ""}${d.goal !== null ? `<span><i style="--c:var(--ink)"></i>Objectif</span>` : ""}</div><div class="chart" id="chProj"></div></div>
+      <div><h3 style="margin:0 0 8px;font-size:14.5px">Selon la base du calcul</h3><div class="rtw" style="overflow-x:auto"><table class="rt"><thead><tr><th>Base</th><th>Par jour ouvré</th><th>Total projeté</th>${d.prevTot ? `<th>vs ${d.y - 1}</th>` : ""}</tr></thead><tbody>${rows}</tbody></table></div>
+        <div class="fld" style="margin-top:14px;max-width:240px"><label for="goal">Objectif annuel (facultatif)</label><input id="goal" data-bind="goal" inputmode="numeric" autocomplete="off" placeholder="ex. 15 000" value="${d.goal === null ? "" : attr(String(d.goal).replace(".", ","))}"></div></div></div>
+    <p class="note-line">Hypothèse : le rythme par jour ouvré (jours fériés déduits) reste celui de la base choisie, et ${lmn} est considéré comme complet. Les mois d'été sont plus bas : comparez les bases.</p></section>`;
+  const mountFn = () => {
+    let c = 0; const real = [], proj = [];
+    for (let m = 0; m < 12; m++) { if (m <= d.lm) { c += d.act[m]; real.push(c); } else real.push(null); }
+    let cp = d.done; for (let m = 0; m < 12; m++) { if (m < d.lm) proj.push(null); else if (m === d.lm) proj.push(d.done); else { cp += sel.r * d.wd(m); proj.push(cp); } }
+    const series = [{ name:"Réalisé", color:"var(--brand)", vals:real }, { name:"Projection", color:"var(--muted)", dash:true, vals:proj }];
+    if (d.prevCum) series.push({ name:String(d.y - 1), color:"var(--c-ech)", dash:"2 3", noDots:true, vals:d.prevCum });
+    if (d.goal !== null) series.push({ name:"Objectif", color:"var(--ink)", dash:"6 4", noDots:true, vals:M3.map(() => d.goal) });
+    mount($("#chProj"), (el) => drawLine(el, { labels:M3, height:260, dec:0, aria:"Volume cumulé réalisé et projeté", series }));
+  };
+  return { html, mount:mountFn };
+}
+
+const anyData = () => yearsList().some((y) => { const c = ctxOf(y); return MONTHS.some((_, m) => PEOPLE.some((p) => pm(p, m, c).has)); });
+
+/* ---------- Tableau de bord ---------- */
+function viewDashboard() {
+  const m = S.month, v = vol(m), pv = m > 0 ? vol(m - 1) : null, cad = cadence(m), pcad = m > 0 ? cadence(m - 1) : 0, ra = refAvg(m), ry = refYtd();
+  const pc = prevCtx(), py = S.year - 1, v1 = pc ? vol(m, pc) : null, cad1 = pc ? cadence(m, pc) : 0, ra1 = pc ? refAvg(m, pc) : null;
+  let ytd1 = 0; if (pc) { const lm = lastDataMonth(); for (let k = 0; k <= lm; k++) ytd1 += vol(k, pc).tot; }
+  const n1l = (cur, prev, lbl) => (cur && prev ? "<span class=\"ks\">" + deltaTxt(cur, prev, "vs " + lbl) + "</span>" : "");
+  let ytd = { mail:0, ech:0 }; for (let k = 0; k < 12; k++) { const x = vol(k); ytd.mail += x.mail; ytd.ech += x.ech; }
+  const rows = adjList(m).sort((a, b) => b.adj - a.adj), maxAdj = rows.length ? rows[0].adj : 1;
+  const none = PEOPLE.filter((p) => !pm(p, m).has && !p.hidden).map((p) => p.id);
+  const flags = S.year === BASE_YEAR ? PEOPLE.filter((p) => p.flag) : [];
+  const pj = projPanel();
+  const welcome = anyData() ? "" : '<section class="panel" style="margin-bottom:16px"><h2>Bienvenue</h2><p class="sub" style="max-width:70ch">Aucune donnée n\'est enregistrée dans ce navigateur. Pour charger vos chiffres, ouvrez les Réglages puis « Importer un fichier » et choisissez votre sauvegarde (.json). Vous pouvez aussi saisir un mois directement depuis la fiche d\'une personne.</p><a class="btn pri" href="#/reglages" style="margin-top:10px">Ouvrir les réglages</a></section>';
+  const html =
+  "<div class=\"ph\"><div><h1>Tableau de bord</h1><p>Volumes traités et productivité de l'équipe, mois par mois.</p></div><div class=\"ctrl\" style=\"display:flex;gap:10px;flex-wrap:wrap;align-items:center\">" + monthPicker() + "<button type=\"button\" class=\"btn\" data-action=\"present\">Mode présentation</button></div></div>" +
+  welcome + "<section class=\"strip\" aria-label=\"Indicateurs\">" +
+    "<div class=\"kpi\"><span class=\"kl\">Total traité depuis janvier</span><span class=\"kv\">" + fmt(ytd.mail + ytd.ech) + "</span><span class=\"ks\">" + fmt(ytd.mail) + " mails · " + fmt(ytd.ech) + " échanges</span>" + n1l(ytd.mail + ytd.ech, ytd1, "même période " + py) + "</div>" +
+    "<div class=\"kpi\"><span class=\"kl\">Total traité en " + MONTHS[m].toLowerCase() + "</span><span class=\"kv\">" + (v.tot ? fmt(v.tot) : "—") + "</span><span class=\"ks\">" + (v.tot ? (pv && pv.tot ? delta(v.tot, pv.tot) : fmt(v.mail) + " mails · " + fmt(v.ech) + " échanges") : "Pas encore de données") + "</span>" + n1l(v.tot, v1 && v1.tot, MONTHS[m].toLowerCase() + " " + py) + "</div>" +
+    "<div class=\"kpi\"><span class=\"kl\">Cadence de l'équipe</span><span class=\"kv\">" + (cad ? fmt(cad, 1) : "—") + "<small>/ jour</small></span><span class=\"ks\">" + (cad ? (pcad ? delta(cad, pcad) : "Somme des productivités ajustées") : "Pas encore de données") + "</span>" + n1l(cad, cad1, MONTHS[m].toLowerCase() + " " + py) + "</div>" +
+    "<div class=\"kpi\"><span class=\"kl\">Moyenne de référence</span><span class=\"kv\">" + (ra ? fmt(ra, 1) : "—") + "<small>/ jour</small></span><span class=\"ks\">" + (ry ? "Depuis janvier : <b>" + fmt(ry.v, 1) + "</b> (" + ry.n + " mois)" : "Depuis janvier : —") + "</span><span class=\"ks\">" + refNote().replace(", Régis", " · Régis") + "</span>" + n1l(ra, ra1, MONTHS[m].toLowerCase() + " " + py) + "</div>" +
+  "</section>" +
+  "<div class=\"g2\">" +
+    "<section class=\"panel\"><div class=\"phd\"><div><h2>Volume traité par mois" + info('chartVol') + "</h2><p class=\"sub\">Cliquez sur un mois pour le sélectionner.</p></div>" + legendVol(vol(m).cli || vol(m).urg ? { cli:1, urg:1 } : null) + "</div><div class=\"chart\" id=\"chVol\"></div></section>" +
+    "<section class=\"panel\"><div class=\"phd\"><div><h2>Classement de " + MONTHS[m].toLowerCase() + "</h2><p class=\"sub\">Productivité par jour de présence</p></div></div>" +
+      (rows.length ? rows.map((r) => "<a class=\"rk\" href=\"" + pHref(r.p.id) + "\"><span class=\"nm\"><i style=\"--c:" + r.p.color + "\"></i>" + esc(r.p.id) + "</span><span class=\"trk\"><i style=\"--c:" + r.p.color + ";width:" + (r.adj / maxAdj * 100).toFixed(1) + "%\"></i></span><span class=\"v\">" + fmt(r.adj, 1) + (r.x.coef !== 1 ? "<small>×" + fmtG(r.x.coef) + "</small>" : "") + "</span></a>").join("") : "<p class=\"empty\">Aucune donnée saisie pour ce mois.</p>") +
+      (rows.length && none.length ? "<p class=\"note-line\">Sans données : " + none.join(", ") + ".</p>" : "") +
+      (rows.some((r) => r.x.coef !== 1) ? "<p class=\"note-line\">×1,1 : majoration appliquée à la productivité.</p>" : "") +
+    "</section>" +
+  "</div>" +
+  "<section class=\"panel\" style=\"margin-top:16px\"><div class=\"phd\"><div><h2>Productivité par personne" + info('chartProd') + "</h2><p class=\"sub\">Total ÷ jours de présence, avec les majorations éventuelles.</p></div></div>" +
+    "<div class=\"lg\" style=\"margin-bottom:10px\">" + PEOPLE.filter((p) => { for (let k = 0; k < 12; k++) if (adjOf(pm(p, k))) return true; return false; }).map((p) => "<button type=\"button\" class=\"chipt\" data-action=\"toggle-line\" data-id=\"" + attr(p.id) + "\" aria-pressed=\"" + (S.lineOff[p.id] ? "false" : "true") + "\"><i style=\"--c:" + p.color + "\"></i>" + esc(p.id) + "</button>").join("") + "</div>" +
+    "<div class=\"chart\" id=\"chLine\"></div></section>" +
+  "<section class=\"panel\" style=\"margin-top:16px\"><div class=\"phd\"><div><h2>Moyenne de référence par mois" + info('chartRef') + "</h2><p class=\"sub\">" + refNote() + ". Pointillés : moyenne depuis janvier" + (ry ? " (" + fmt(ry.v, 1) + ")" : "") + (pc ? ". Orange : " + py : "") + ".</p></div></div><div class=\"chart\" id=\"chRef\"></div></section>" + pj.html +
+  "<section class=\"panel\" style=\"margin-top:16px\"><h2>Remarques</h2><p class=\"sub\">Reprises du fichier Excel.</p><ul class=\"tl\" style=\"margin-top:8px\">" +
+    teamNotes().map((n) => "<li><b>" + MONTHS[n.m] + "</b><span>" + esc(n.t) + "</span></li>").join("") +
+    flags.map((p) => "<li><a href=\"" + pHref(p.id) + "\">" + esc(p.id) + "</a><span>" + esc(p.flag) + "</span></li>").join("") +
+  "</ul></section>";
+  return { html, after() {
+    mount($("#chVol"), (el) => drawStacked(el, { labels:M3, series:yearVolSeries(vol), sel:m, pick:true, aria:"Volume traité par mois" }));
+    mount($("#chLine"), (el) => drawLine(el, { labels:M3, sel:m, pick:true, aria:"Productivité par personne et par mois",
+      series:PEOPLE.filter((p) => !S.lineOff[p.id]).map((p) => ({ name:p.id, color:p.color, vals:M3.map((_, k) => { const a = adjOf(pm(p, k)); return a && a > 0 ? a : null; }) })).filter((sr) => sr.vals.some((x) => x !== null)) }));
+    mount($("#chRef"), (el) => drawRef(el, m));
+    pj.mount();
+  } };
+}
+
+/* ---------- Comparaison de mois (fiche personne) ---------- */
+const CMP_OPT = { team:true, abs:true };
+
+function cmpData(p, xs) {
+  const sel = (S.cmp[p.id] || []).filter((m) => xs[m].has).sort((a, b) => a - b);
+  if (sel.length < 2) return { sel, d:null, rows:[] };
+  const d = sel.map((m) => {
+    const x = xs[m], adj = adjOf(x), ref = refAvg(m), pres = x.jours !== null ? x.jours - x.abs : null;
+    return { m, x, adj, ref, pres, gap: adj !== null && ref ? (adj / ref - 1) * 100 : null };
+  });
+  const hasCli = d.some((r) => r.x.cli > 0), hasUrg = d.some((r) => r.x.urg > 0);
+  const R = (l, g, f, mode, b, dir, k, grp) => ({ l, g, f, mode, b, dir, k, grp:grp || "" });
+  const rows = [
+    R("Mails", (r) => r.x.mail, (v) => fmt(v), "pct", false, 1, "cMail"),
+    R("Échanges", (r) => r.x.ech, (v) => fmt(v), "pct", false, 1, "cEch")
+  ];
+  if (hasCli) rows.push(R("Échanges clients", (r) => r.x.cli, (v) => fmt(v), "pct", false, 1, "cCli"));
+  if (hasUrg) rows.push(R("Urgences", (r) => r.x.urg, (v) => fmt(v), "pct", false, 1, "cUrg"));
+  rows.push(
+    R("Total traité", (r) => r.x.tot, (v) => fmt(v), "pct", true, 1, "cTot"),
+    R("Jours du mois", (r) => r.x.jours, (v) => fmtG(v), "pct", false, 0, "cJours"),
+    R("Jours de présence", (r) => r.pres, (v) => fmtG(v), "pct", false, 0, "cPres", "abs"),
+    R("Absences (jours)", (r) => r.x.abs, (v) => fmtG(v), "pct", false, -1, "cAbs", "abs"),
+    R("Productivité par jour de présence", (r) => r.x.prod, (v) => fmt(v, 1), "pct", true, 1, "cProd"),
+    R("Productivité ajustée", (r) => r.adj, (v) => fmt(v, 1), "pct", true, 1, "cAdj"),
+    R("Moyenne de référence équipe", (r) => r.ref, (v) => fmt(v, 1), "pct", false, 0, "cRef", "team"),
+    R("Écart avec l'équipe", (r) => r.gap, (v) => signed(v, 0) + " %", "pt", true, 1, "cGap", "team")
+  );
+  return { sel, d, rows, hasCli, hasUrg };
+}
+
+function cmpTable(d, rows, cls, withInfo) {
+  const A = d[0], Z = d[d.length - 1];
+  const evN = (g, mode) => {
+    const a = g(A), b = g(Z);
+    if (a === null || a === undefined || b === null || b === undefined) return null;
+    if (mode === "pt") return b - a;
+    return a === 0 ? null : b / a - 1;
+  };
+  const evT = (g, mode) => { const n = evN(g, mode); return n === null ? "—" : mode === "pt" ? signed(n, 0) + " pt" : signed(n * 100, 0) + " %"; };
+  const MN = d.length > 6 ? M3 : MONTHS;
+  const head = `<thead><tr><th></th>${d.map((r) => `<th>${MN[r.m]}</th>`).join("")}<th>${MN[A.m]} → ${MN[Z.m]}${withInfo ? info("cEvo") : ""}</th></tr></thead>`;
+  const body = rows.map((row) => {
+    const n = evN(row.g, row.mode), rd = n === null ? 0 : (row.mode === "pt" ? Math.round(n) : Math.round(n * 100));
+    const ec = row.dir && n !== null && rd !== 0 ? (rd * row.dir > 0 ? " gp" : " gn") : "";
+    const isGap = row.grp === "team" && row.mode === "pt";
+    const cells = d.map((r) => {
+      const v = row.g(r), c = isGap && v !== null && v !== undefined && Math.round(v) !== 0 ? (v > 0 ? " gp" : " gn") : "", k = ((row.b ? "b" : "") + c).trim();
+      return `<td${k ? ` class="${k}"` : ""}>${v === null || v === undefined ? "—" : row.f(v)}</td>`;
+    }).join("");
+    return `<tr><td>${row.l}${withInfo ? info(row.k) : ""}</td>${cells}<td class="b${ec}">${evT(row.g, row.mode)}</td></tr>`;
+  }).join("");
+  return `<table class="${cls}">${head}<tbody>${body}</tbody></table>`;
+}
+
+function cmpInsights(p, d, opt) {
+  const A = d[0], Z = d[d.length - 1], nm = (r) => MONTHS[r.m].toLowerCase();
+  const chg = (a, b) => (a ? (b / a - 1) * 100 : null), pct = (v) => signed(v, 0) + " %";
+  const tc = chg(A.x.tot, Z.x.tot), parts = [];
+  if (tc !== null) parts.push(`le volume traité passe de ${fmt(A.x.tot)} à ${fmt(Z.x.tot)} (${pct(tc)})`);
+  if (A.adj !== null && Z.adj !== null) { const c = chg(A.adj, Z.adj); if (c !== null) parts.push(`la productivité ajustée de ${fmt(A.adj, 1)} à ${fmt(Z.adj, 1)} (${pct(c)})`); }
+  let syn = `Entre ${nm(A)} et ${nm(Z)}${d.length > 2 ? ` (${d.length} mois comparés)` : ""}, ${parts.length ? parts.join(" et ") : "les données sont insuffisantes pour calculer une évolution"}.`;
+  if (opt.team && A.gap !== null && Z.gap !== null) syn += ` L'écart avec l'équipe passe de ${signed(A.gap, 0)} % à ${signed(Z.gap, 0)} %.`;
+  const pts = [], wa = d.filter((r) => r.adj !== null);
+  if (wa.length >= 2) {
+    const best = wa.slice().sort((a, b) => b.adj - a.adj)[0], low = wa.slice().sort((a, b) => a.adj - b.adj)[0];
+    if (best.m !== low.m) pts.push(`Meilleur mois : ${nm(best)} (${fmt(best.adj, 1)} par jour). Mois le plus bas : ${nm(low)} (${fmt(low.adj, 1)}).`);
+  }
+  if (opt.abs && A.pres && Z.pres !== null && tc !== null) { const pc = chg(A.pres, Z.pres); pts.push(`Jours de présence : ${fmtG(A.pres)} en ${nm(A)} contre ${fmtG(Z.pres)} en ${nm(Z)} (${pct(pc)}), à rapprocher de l'évolution du volume (${pct(tc)}).`); }
+  if ((A.x.coef !== 1 || Z.x.coef !== 1) && A.x.prod && Z.x.prod !== null) pts.push(`Productivité avant majoration : ${fmt(A.x.prod, 1)} → ${fmt(Z.x.prod, 1)} (${pct(chg(A.x.prod, Z.x.prod))}).`);
+  if (opt.team) { const c = d.filter((r) => r.gap !== null); if (c.length) pts.push(`Au-dessus de la moyenne de référence de l'équipe sur ${c.filter((r) => r.gap > 0).length} mois sur ${c.length}.`); }
+  if (A.x.tot && Z.x.tot) pts.push(`Part des mails dans le volume : ${fmt(A.x.mail / A.x.tot * 100, 0)} % en ${nm(A)}, ${fmt(Z.x.mail / Z.x.tot * 100, 0)} % en ${nm(Z)}.`);
+  return { syn, pts };
+}
+
+function drawCmpBars(el, cfg) {
+  const W = cw(el), H = chH(el, cfg.height || 210), ml = 40, mr = 8, mt = 20, mb = 26, pw = W - ml - mr, ph = H - mt - mb, n = cfg.labels.length, band = pw / n;
+  const all = cfg.vals.concat(cfg.refs || []).filter((v) => v !== null && v !== undefined);
+  const max = niceMax(Math.max.apply(null, all.concat([1])) * 1.05), y = (v) => mt + ph - (v / max) * ph;
+  let s = "<svg viewBox=\"0 0 " + W + " " + H + "\" role=\"img\" aria-label=\"" + attr(cfg.aria) + "\">";
+  for (let k = 0; k <= 4; k++) { const v = (max / 4) * k, yy = y(v); s += "<line class=\"gl\" x1=\"" + ml + "\" x2=\"" + (W - mr) + "\" y1=\"" + yy + "\" y2=\"" + yy + "\"/><text x=\"" + (ml - 8) + "\" y=\"" + (yy + 4) + "\" text-anchor=\"end\">" + fmt(v, v % 1 ? 1 : 0) + "</text>"; }
+  const bw = Math.min(46, band * 0.55), showVal = band >= 34;
+  cfg.labels.forEach((lb, i) => {
+    const cx = ml + band * (i + 0.5), v = cfg.vals[i], rf = cfg.refs ? cfg.refs[i] : null;
+    if (v !== null && v !== undefined) s += "<rect x=\"" + (cx - bw / 2).toFixed(1) + "\" y=\"" + y(v).toFixed(1) + "\" width=\"" + bw.toFixed(1) + "\" height=\"" + Math.max(mt + ph - y(v), 0.5).toFixed(1) + "\" rx=\"3\" style=\"fill:" + cfg.color + "\"/>" + (showVal ? "<text x=\"" + cx.toFixed(1) + "\" y=\"" + (y(v) - 5).toFixed(1) + "\" text-anchor=\"middle\" style=\"font-weight:700;fill:var(--ink)\">" + fmt(v, 1) + "</text>" : "");
+    if (rf !== null && rf !== undefined) s += "<line x1=\"" + (cx - bw / 2 - 7).toFixed(1) + "\" x2=\"" + (cx + bw / 2 + 7).toFixed(1) + "\" y1=\"" + y(rf).toFixed(1) + "\" y2=\"" + y(rf).toFixed(1) + "\" style=\"stroke:var(--ink)\" stroke-width=\"2\" stroke-dasharray=\"4 3\"/>";
+    s += "<text x=\"" + cx.toFixed(1) + "\" y=\"" + (H - 8) + "\" text-anchor=\"middle\">" + lb + "</text>";
+  });
+  el.innerHTML = s + "</svg>";
+}
+
+function cmpDoc(p, c, ins, opt) {
+  const d = c.d, date = new Date().toLocaleDateString("fr-FR", { day:"numeric", month:"long", year:"numeric" });
+  const rr = c.rows.filter((r) => (opt.abs || r.grp !== "abs") && (opt.team || r.grp !== "team"));
+  const maj = Array.from(new Set(d.filter((r) => r.x.coef !== 1).map((r) => "×" + fmtG(r.x.coef))));
+  const rem = d.filter((r) => S.notes[p.id][r.m]).map((r) => `<li><b>${MONTHS[r.m]}</b> : ${esc(S.notes[p.id][r.m])}</li>`);
+  return `<article class="bilan cmpdoc"><section class="bl-page">
+    <header class="bl-head"><div><div class="bl-kicker">Comparaison de mois · ${S.year}</div><h2>${esc(p.id)}</h2></div>
+      <dl class="bl-meta"><div><dt>Mois comparés</dt><dd>${esc(d.length > 4 ? `${d.length} mois, de ${MONTHS[d[0].m].toLowerCase()} à ${MONTHS[d[d.length - 1].m].toLowerCase()}` : d.map((r) => MONTHS[r.m]).join(", "))}</dd></div><div><dt>Édité le</dt><dd>${esc(date)}</dd></div></dl></header>
+    <p class="bl-syn">${esc(ins.syn)}</p>
+    <h3 class="bl-h">Volume et productivité</h3>
+    <div class="bl-2">
+      <div>${legendVol({ cli:c.hasCli, urg:c.hasUrg })}<div class="chart" id="chPrVol" data-pw="320" data-ph="170"></div></div>
+      <div><div class="lg"><span><i style="--c:var(--brand)"></i>Productivité ajustée</span>${opt.team ? `<span><i style="--c:var(--ink)"></i>Réf. équipe (tiret)</span>` : ""}</div><div class="chart" id="chPrProd" data-pw="320" data-ph="170"></div></div>
+    </div>
+    <h3 class="bl-h">Comparatif détaillé</h3>
+    <div class="bl-tw">${cmpTable(d, rr, "bl-t" + (d.length > 5 || rr.length > 11 ? " dense" : ""), false)}</div>
+    <p class="bl-note">Vert : évolution favorable. Rouge : évolution défavorable${opt.abs ? " (pour les absences, une baisse est favorable)" : ""}. La dernière colonne compare le premier au dernier mois.${maj.length ? ` Productivité ajustée : majoration appliquée sur certains mois (${esc(maj.join(", "))}).` : ""}</p>
+    <h3 class="bl-h">Points à retenir</h3>
+    <ul class="bl-notes bl-pts">${ins.pts.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>
+    ${rem.length ? `<h3 class="bl-h">Remarques</h3><ul class="bl-notes">${rem.join("")}</ul>` : ""}
+    <footer class="bl-foot"><span>Document confidentiel · Comparaison de mois ${S.year} · ${esc(p.id)}</span><span>Page 1 / 1</span></footer>
+  </section></article>`;
+}
+
+function comparePanel(p, xs, dm) {
+  const c = cmpData(p, xs), sel = c.sel;
+  const chips = dm.map((r) => `<button type="button" class="chipt" data-action="cmp-toggle" data-m="${r.m}" aria-pressed="${sel.includes(r.m)}"><i style="--c:${p.color}"></i>${MONTHS[r.m]}</button>`).join("");
+  const presets = dm.length >= 2 ? `<span class="sub">Raccourcis :</span><button type="button" class="btn sm" data-action="cmp-preset" data-v="last2">2 derniers mois</button>` + (dm.length >= 3 ? `<button type="button" class="btn sm" data-action="cmp-preset" data-v="last3">3 derniers mois</button>` : "") + `<button type="button" class="btn sm" data-action="cmp-preset" data-v="all">Tous les mois</button>` : "";
+  let body, doc = "", mountFn = () => {};
+  if (!c.d) {
+    body = `<p class="empty">Sélectionnez au moins deux mois pour les comparer.</p>`;
+  } else {
+    const d = c.d, full = cmpInsights(p, d, { team:true, abs:true }), o = CMP_OPT, ins = cmpInsights(p, d, o);
+    const lab = d.map((r) => M3[r.m]), tips = d.map((r) => MONTHS[r.m]);
+    const vs = () => { const s = [{ name:"Mails", color:"var(--c-mail)", vals:d.map((r) => r.x.mail) }, { name:"Échanges", color:"var(--c-ech)", vals:d.map((r) => r.x.ech) }]; if (c.hasCli) s.push({ name:"Échanges clients", color:"var(--c-cli)", vals:d.map((r) => r.x.cli) }); if (c.hasUrg) s.push({ name:"Urgences", color:"var(--c-urg)", vals:d.map((r) => r.x.urg) }); return s; };
+    body = `<div class="rtw" style="overflow-x:auto">${cmpTable(d, c.rows, "rt cmp", true)}</div>` +
+      `<p class="note-line">Vert : évolution favorable. Rouge : évolution défavorable (pour les absences, une baisse est favorable). Les lignes Jours du mois, Jours de présence et Moyenne de référence restent neutres.</p>` +
+      `<div class="two" style="margin-top:16px"><div><h3 style="margin:0 0 6px;font-size:14.5px">Volume traité</h3>${legendVol({ cli:c.hasCli, urg:c.hasUrg })}<div class="chart" id="chCmpVol" style="margin-top:6px"></div></div>` +
+      `<div><h3 style="margin:0 0 6px;font-size:14.5px">Productivité ajustée</h3><div class="lg"><span><i style="--c:${p.color}"></i>${esc(p.id)}</span><span><i style="--c:var(--ink)"></i>Réf. équipe (tiret)</span></div><div class="chart" id="chCmpProd" style="margin-top:6px"></div></div></div>` +
+      `<h3 style="margin:16px 0 4px;font-size:14.5px">Points à retenir</h3><ul class="rp-notes">${full.pts.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>`;
+    doc = cmpDoc(p, c, ins, o);
+    mountFn = () => {
+      mount($("#chCmpVol"), (el) => drawStacked(el, { labels:lab, tips, series:vs(), height:210, aria:"Volume traité sur les mois comparés" }));
+      mount($("#chCmpProd"), (el) => drawCmpBars(el, { labels:lab, vals:d.map((r) => r.adj), refs:d.map((r) => r.ref), color:p.color, height:210, aria:"Productivité ajustée sur les mois comparés" }));
+      mount($("#chPrVol"), (el) => drawStacked(el, { labels:lab, tips, series:vs(), height:170, aria:"Volume traité sur les mois comparés" }));
+      mount($("#chPrProd"), (el) => drawCmpBars(el, { labels:lab, vals:d.map((r) => r.adj), refs:o.team ? d.map((r) => r.ref) : null, color:"var(--brand)", height:170, aria:"Productivité ajustée sur les mois comparés" }));
+    };
+  }
+  const printBar = c.d ? `<div class="noprint" style="display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center;margin-bottom:12px"><span class="sub">Dans l'impression :</span><label class="sw"><input type="checkbox" data-bind="cmpopt" data-key="team"${CMP_OPT.team ? " checked" : ""}> Comparaison avec l'équipe</label><label class="sw"><input type="checkbox" data-bind="cmpopt" data-key="abs"${CMP_OPT.abs ? " checked" : ""}> Absences et jours de présence</label></div>` : "";
+  const html = `<section class="panel" style="margin-top:16px"><div class="phd"><div><h2>Comparer des mois</h2><p class="sub">Choisissez 2 mois ou plus. La dernière colonne compare le premier au dernier mois choisi.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap">${c.d ? `<button type="button" class="btn sm pri" data-action="cmp-print">Imprimer / PDF</button>` : ""}${sel.length ? `<button type="button" class="btn sm" data-action="cmp-clear">Effacer</button>` : ""}</div></div>` +
+    `<div class="lg noprint" style="margin-bottom:8px">${chips}</div>` +
+    (presets ? `<div class="noprint" style="display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;margin-bottom:12px">${presets}</div>` : "") +
+    printBar + body + `</section>`;
+  return { html, doc, mount:mountFn };
+}
+
+/* ---------- Fiche personne ---------- */
+let personFilterFor = null;
+function viewPerson(id) {
+  const p = P(id), L = LAY[p.layout], pc = prevCtx();
+  if (personFilterFor !== id) { S.pdMonth = null; personFilterFor = id; }
+  const xs = MONTHS.map((_, m) => pm(p, m));
+  const dm = xs.map((x, m) => ({ x, m })).filter((r) => r.x.has);
+  const totalTraite = dm.reduce((s, r) => s + r.x.mail + r.x.ech, 0);
+  const avg = personAvg(p), excelAvg = L.avg && S.year === BASE_YEAR ? numOf(book.value(p.id, L.avg)) : null;
+  const abs = xs.reduce((s, x) => s + x.abs, 0);
+  const best = dm.filter((r) => r.x.prod !== null).sort((a, b) => b.x.prod - a.x.prod)[0];
+  const maxTot = Math.max.apply(null, xs.map((x) => x.mail + x.ech + x.cli + x.urg).concat([1]));
+  const hasAdj = dm.some((r) => r.x.coef !== 1);
+  const filterOn = S.pdMonth !== null && S.pdMonth !== undefined;
+  const shown = (m) => (filterOn ? m === S.pdMonth : (xs[m].has || m === curMonth || !!S.notes[p.id][m]));
+  const cmpPanel = comparePanel(p, xs, dm);
+  const rowsHtml = xs.map((x, m) => {
+    if (!shown(m)) return "";
+    const sum = x.mail + x.ech + x.cli + x.urg, note = S.notes[p.id][m];
+    const seg = [[x.mail, "--c-mail"], [x.ech, "--c-ech"], [x.cli, "--c-cli"], [x.urg, "--c-urg"]].filter((s) => s[0] > 0).map((s) => "<i style=\"background:var(" + s[1] + ");width:" + (s[0] / maxTot * 100).toFixed(2) + "%\"></i>").join("");
+    const days = x.jours === null ? "" : fmtG(x.jours) + " jours" + (x.abs ? " · " + fmtG(x.abs) + " abs." : "");
+    const px = pc ? pm(p, m, pc) : null, ch = px && px.has && px.prod !== null && x.has && x.prod !== null ? pctCh(px.prod, x.prod) : null;
+    const n1 = ch === null ? "" : "<small class=\"n1\">" + (S.year - 1) + " : " + fmt(px.prod, 1) + " (<span class=\"" + (ch >= 0 ? "gp" : "gn") + "\">" + signed(ch, 0) + " %</span>)</small>";
+    return "<div class=\"mrow" + (x.has ? "" : " none") + "\"><div class=\"mname\">" + MONTHS[m] + (m === curMonth ? "<small>Mois en cours</small>" : "") + "</div>" +
+      "<div class=\"mbar\" aria-hidden=\"true\">" + seg + "</div>" +
+      "<div class=\"mnums\">" + (x.has ? "<span class=\"nw\">Mails<b>" + fmt(x.mail) + "</b></span><span class=\"nw\">Échanges<b>" + fmt(x.ech) + "</b></span>" + (x.cli ? "<span class=\"nw\">Clients<b>" + fmt(x.cli) + "</b></span>" : "") + (x.urg ? "<span class=\"nw\">Urgences<b>" + fmt(x.urg) + "</b></span>" : "") : "Pas de données") + "</div>" +
+      "<div class=\"mprod\">" + (x.has && x.prod !== null ? "<b>" + fmt(x.prod, 1) + "</b>" + (x.coef !== 1 ? "<span class=\"mcoef\">×" + fmtG(x.coef) + "</span>" : "") + "<small>par jour de présence</small>" + n1 : "<span>—</span>") + "</div>" +
+      "<div class=\"mdays\">" + esc(days) + "</div>" +
+      "<div class=\"mact\"><button type=\"button\" class=\"btn sm\" data-action=\"edit\" data-p=\"" + attr(p.id) + "\" data-m=\"" + m + "\">" + (x.has ? "Modifier" : "Saisir") + "</button></div>" +
+      (note ? "<div class=\"mnote\">" + esc(note) + "</div>" : "") + "</div>";
+  }).join("");
+  const empties = filterOn ? [] : xs.map((_, m) => m).filter((m) => !shown(m));
+  const emptyHtml = empties.length ? "<div class=\"empties\"><span class=\"sub\">Sans données, cliquez pour saisir :</span>" + empties.map((m) => "<button type=\"button\" class=\"chip-add\" data-action=\"edit\" data-p=\"" + attr(p.id) + "\" data-m=\"" + m + "\">" + MONTHS[m] + " +</button>").join("") + "</div>" : "";
+  const monthSel = "<select class=\"sel\" data-bind=\"pdMonth\" aria-label=\"Filtrer le détail par mois\"><option value=\"\">Tous les mois</option>" + MONTHS.map((mn, i) => "<option value=\"" + i + "\"" + (S.pdMonth === i ? " selected" : "") + ">" + mn + "</option>").join("") + "</select>";
+  const html =
+  "<div class=\"ph\"><div><h1><span class=\"bar4\" style=\"--c:" + p.color + "\"></span>" + esc(p.id) + "</h1>" +
+    "<p>" + (p.hidden ? "<span class=\"pill\">Feuille masquée dans Excel</span> " : "") + (p.flag && S.year === BASE_YEAR ? "<span class=\"pill warn\">" + esc(p.flag) + "</span>" : "") + "</p></div>" +
+    "<div style=\"display:flex;gap:14px;flex-wrap:wrap;align-items:center\"><a class=\"btn pri\" href=\"" + bHref(p.id) + "\">Bilan annuel</a><label class=\"sw\"><input type=\"checkbox\" data-bind=\"incl\" data-id=\"" + attr(p.id) + "\"" + (S.incl[p.id] ? " checked" : "") + "> Compter dans le total traité de l'équipe</label></div></div>" +
+  "<section class=\"strip\">" +
+    "<div class=\"kpi\"><span class=\"kl\">Total traité" + info('pTotal') + "</span><span class=\"kv\">" + fmt(totalTraite) + "</span><span class=\"ks\">Mails et échanges, " + dm.length + " mois saisis</span></div>" +
+    "<div class=\"kpi\"><span class=\"kl\">Productivité moyenne" + info('pProd') + "</span><span class=\"kv\">" + (avg === null ? "—" : fmt(avg, 1)) + "<small>/ jour</small></span><span class=\"ks\">Sur les mois saisis" + (excelAvg !== null ? " · Excel (12 mois) : " + fmt(excelAvg, 1) : "") + "</span></div>" +
+    "<div class=\"kpi\"><span class=\"kl\">Meilleur mois" + info('pBest') + "</span><span class=\"kv\">" + (best ? MONTHS[best.m] : "—") + "</span><span class=\"ks\">" + (best ? fmt(best.x.prod, 1) + " par jour de présence" : "Pas de données") + "</span></div>" +
+    "<div class=\"kpi\"><span class=\"kl\">Absences" + info('pAbs') + "</span><span class=\"kv\">" + fmtG(abs) + "<small>jours</small></span><span class=\"ks\">Sur l'année</span></div>" +
+  "</section>" +
+  "<div class=\"g2\"><section class=\"panel\"><div class=\"phd\"><h2>Volume par mois</h2>" + legendVol({ cli:xs.some((x) => x.cli), urg:xs.some((x) => x.urg) }) + "</div><div class=\"chart\" id=\"chVol\"></div></section>" +
+  "<section class=\"panel\"><div class=\"phd\"><h2>Productivité par jour de présence</h2>" + (hasAdj ? "<div class=\"lg\"><span><i style=\"--c:" + p.color + "\"></i>Brute</span><span>Pointillés : avec majoration</span></div>" : "") + "</div><div class=\"chart\" id=\"chLine\"></div></section></div>" +
+  cmpPanel.html +
+  "<section class=\"panel\" style=\"margin-top:16px\"><div class=\"phd\"><div><h2>Détail mois par mois</h2><p class=\"sub\">" + (filterOn ? "Un seul mois affiché. Choisissez « Tous les mois » pour revenir à la liste complète." : "Utilisez « Modifier » pour saisir ou corriger un mois. Les calculs suivent automatiquement.") + "</p></div>" + monthSel + "</div>" + (rowsHtml || "<p class=\"empty\">Aucune donnée pour ce mois. Utilisez « Saisir » pour en ajouter.</p>") + emptyHtml + "</section>" + cmpPanel.doc;
+  return { html, after() {
+    mount($("#chVol"), (el) => drawStacked(el, { labels:M3, series:yearVolSeries((m) => { const x = xs[m]; return { mail:x.mail, ech:x.ech, cli:x.cli, urg:x.urg }; }), height:240, aria:"Volume de " + p.id + " par mois" }));
+    cmpPanel.mount();
+    mount($("#chLine"), (el) => drawLine(el, { labels:M3, height:240, aria:"Productivité de " + p.id, series:[{ name:"Productivité", color:p.color, vals:xs.map((x) => (x.has && x.prod !== null ? x.prod : null)) }].concat(hasAdj ? [{ name:"Avec majoration", color:p.color, dash:true, vals:xs.map((x) => (x.has && x.prod !== null ? x.prod * x.coef : null)) }] : []) }));
+  } };
+}
+
+/* ---------- Équipe ---------- */
+const HEAT_ORDER = ["Pierrick", "Anais", "Charlotte", "Clara", "Léa", "Ben", "Régis", "Virginie"];
+function heatPanel() {
+  const rows = [], colTot = {}; let grand = 0, min = Infinity, max = -Infinity;
+  for (let m = 0; m < 12; m++) {
+    const l = adjList(m), tot = l.reduce((s, r) => s + r.adj, 0), cells = {};
+    l.forEach((r) => { cells[r.p.id] = r.adj / tot; colTot[r.p.id] = (colTot[r.p.id] || 0) + r.adj; if (r.adj / tot < min) min = r.adj / tot; if (r.adj / tot > max) max = r.adj / tot; });
+    grand += tot; rows.push({ m, tot, cells, has:tot > 0 });
+  }
+  const cols = HEAT_ORDER.map(P).filter((p) => colTot[p.id] !== undefined);
+  const cell = (v) => {
+    if (v === undefined) return "<td class=\"hc\">—</td>";
+    const t = max > min ? (v - min) / (max - min) : 0;
+    return "<td class=\"hc" + (t > 0.75 ? " hi" : "") + "\" style=\"background:rgba(87,187,138," + (t * 0.85).toFixed(3) + ")\">" + fmt(v * 100, 2) + " %</td>";
+  };
+  let h = "<section class=\"panel\" style=\"margin-top:16px\"><div class=\"phd\"><div><h2>Vue d'ensemble : part de chacun, mois par mois" + info('heat') + "</h2><p class=\"sub\">Productivité ajustée de chaque personne ÷ cadence de l'équipe du même mois. Chaque ligne fait 100 %. Cliquez sur un mois pour le sélectionner.</p></div>" +
+    "<div class=\"lg\"><span>Part faible</span><span class=\"gr\" aria-hidden=\"true\"></span><span>Part forte</span></div></div>" +
+    "<div class=\"heatwrap\"><table class=\"heat\"><caption class=\"sr\">Part de chacun par mois</caption><thead><tr><th scope=\"col\">Mois</th>" +
+    cols.map((p) => "<th scope=\"col\"><span class=\"pn\"><i style=\"--c:" + p.color + "\"></i>" + esc(p.id) + "</span></th>").join("") + "<th scope=\"col\">Cadence</th></tr></thead><tbody>";
+  rows.forEach((r) => {
+    h += "<tr" + (r.m === S.month ? " class=\"cur\"" : "") + "><th scope=\"row\"><button type=\"button\" class=\"lnk\" data-pick=\"" + r.m + "\">" + MONTHS[r.m] + "</button></th>";
+    h += r.has ? cols.map((p) => cell(r.cells[p.id])).join("") + "<td class=\"cd\">" + fmt(r.tot, 1) + "</td>" : "<td class=\"nod\" colspan=\"" + (cols.length + 1) + "\">Pas de données</td>";
+    h += "</tr>";
+  });
+  h += "</tbody><tfoot><tr><th scope=\"row\">Année</th>" + cols.map((p) => "<td>" + (grand ? fmt(colTot[p.id] / grand * 100, 2) + " %" : "—") + "</td>").join("") + "<td class=\"cd\">" + fmt(rows.reduce((s, r) => s + r.tot, 0), 1) + "</td></tr></tfoot></table></div>" +
+    "<p class=\"note-line\">La ligne « Année » compare la somme des productivités ajustées de chacun sur les mois saisis.</p></section>";
+  return h;
+}
+function viewTeam() {
+  const m = S.month, rows = adjList(m).sort((a, b) => b.adj - a.adj), tot = rows.reduce((s, r) => s + r.adj, 0);
+  const yr = PEOPLE.map((p) => { let mail = 0, ech = 0, ab = 0; for (let k = 0; k < 12; k++) { const x = pm(p, k); mail += x.mail; ech += x.ech; ab += x.abs; } return { p, mail, ech, tot:mail + ech, ab }; });
+  const yrTot = yr.filter((r) => S.incl[r.p.id]).reduce((s, r) => s + r.tot, 0);
+  const yrRows = yr.filter((r) => r.tot > 0).sort((a, b) => b.tot - a.tot), maxY = yrRows.length ? yrRows[0].tot : 1;
+  const abRows = yr.filter((r) => r.ab > 0).sort((a, b) => b.ab - a.ab), maxA = abRows.length ? abRows[0].ab : 1;
+  const html =
+  "<div class=\"ph\"><div><h1>Équipe</h1><p>Qui contribue à quoi, sur un mois et sur l'année.</p></div>" + monthPicker() + "</div>" +
+  "<section class=\"panel\"><div class=\"phd\"><div><h2>Part de chacun en " + MONTHS[m].toLowerCase() + info('share') + "</h2><p class=\"sub\">Productivité ajustée de chaque personne, rapportée à la cadence de l'équipe (" + fmt(tot, 1) + " / jour).</p></div></div>" +
+    (rows.length ? "<div class=\"share\" role=\"img\" aria-label=\"Répartition de la cadence de l'équipe\">" + rows.map((r) => { const pc = r.adj / tot * 100; return "<i style=\"background:" + r.p.color + ";color:" + inkFor(r.p.color) + ";width:" + pc.toFixed(2) + "%\" data-tip=\"" + attr(tipHtml(r.p.id, [{ c:r.p.color, n:"Part", v:fmt(pc, 1) + " %" }])) + "\">" + (pc >= 7 ? fmt(pc, 0) + " %" : "") + "</i>"; }).join("") + "</div>" +
+      "<div class=\"shl\">" + rows.map((r) => "<span><i style=\"--c:" + r.p.color + "\"></i>" + esc(r.p.id) + "<b>" + fmt(r.adj / tot * 100, 1) + " %</b></span>").join("") + "</div>" : "<p class=\"empty\">Aucune donnée saisie pour ce mois.</p>") +
+  "</section>" + heatPanel() +
+  "<div class=\"g2\">" +
+    "<section class=\"panel\"><div class=\"phd\"><div><h2>Volume traité depuis janvier</h2><p class=\"sub\">Mails et échanges par personne. Total de l'équipe : " + fmt(yrTot) + ".</p></div>" + legendVol(null) + "</div>" +
+      (yrRows.length ? yrRows.map((r) => "<a class=\"rk\" href=\"" + pHref(r.p.id) + "\"><span class=\"nm\"><i style=\"--c:" + r.p.color + "\"></i>" + esc(r.p.id) + "</span><span class=\"trk\"><i style=\"background:var(--c-mail);width:" + (r.mail / maxY * 100).toFixed(1) + "%\"></i><i style=\"background:var(--c-ech);width:" + (r.ech / maxY * 100).toFixed(1) + "%\"></i></span><span class=\"v\">" + fmt(r.tot) + "</span></a>").join("") : "<p class=\"empty\">Aucune donnée.</p>") +
+      "<p class=\"note-line\">Les personnes non comptées dans le total (réglage sur leur fiche) apparaissent ici mais pas dans le total de l'équipe.</p></section>" +
+    "<section class=\"panel\"><div class=\"phd\"><div><h2>Absences sur l'année</h2><p class=\"sub\">En jours.</p></div></div>" +
+      (abRows.length ? abRows.map((r) => "<a class=\"rk\" href=\"" + pHref(r.p.id) + "\"><span class=\"nm\"><i style=\"--c:" + r.p.color + "\"></i>" + esc(r.p.id) + "</span><span class=\"trk\"><i style=\"--c:" + r.p.color + ";width:" + (r.ab / maxA * 100).toFixed(1) + "%\"></i></span><span class=\"v\">" + fmtG(r.ab) + "</span></a>").join("") : "<p class=\"empty\">Aucune absence saisie.</p>") + "</section>" +
+  "</div>" +
+  "<section class=\"panel\" style=\"margin-top:16px\"><h2>Événements de l'année</h2><ul class=\"tl\" style=\"margin-top:8px\">" + teamNotes().map((n) => "<li><b>" + MONTHS[n.m] + "</b><span>" + esc(n.t) + "</span></li>").join("") + "</ul></section>";
+  return { html, after() {} };
+}
+
+/* ---------- Bilan annuel individuel ---------- */
+const mean = (a) => (a.length ? a.reduce((t, x) => t + x, 0) / a.length : null);
+const ord = (n) => (n === 1 ? "1er" : n + "e");
+const signed = (v, d = 1) => { const r = Math.round(v * Math.pow(10, d)) / Math.pow(10, d); return r === 0 ? fmt(0, d) : (r > 0 ? "+" : "−") + fmt(Math.abs(r), d); };
+function splitPeriods(dm) {
+  if (dm.length < 4) return null;
+  const half = Math.ceil(dm.length / 2), p1 = dm.slice(0, half), p2 = dm.slice(half);
+  const lbl = (l) => (l.length === 1 ? MONTHS[l[0].m] : MONTHS[l[0].m] + "\u2013" + MONTHS[l[l.length - 1].m]);
+  const totOf = (l) => l.reduce((s, r) => s + r.x.mail + r.x.ech, 0);
+  const prodOf = (l) => { const w = l.filter((r) => r.x.prod !== null); return w.length ? mean(w.map((r) => r.x.prod)) : null; };
+  const gapOf = (l) => { const c = l.filter((r) => r.adj !== null && r.ref); return c.length ? mean(c.map((r) => r.adj)) / mean(c.map((r) => r.ref)) - 1 : null; };
+  const absOf = (l) => l.reduce((s, r) => s + r.x.abs, 0);
+  return { l1:lbl(p1), l2:lbl(p2), n1:p1.length, n2:p2.length, tot1:totOf(p1), tot2:totOf(p2), prod1:prodOf(p1), prod2:prodOf(p2), gap1:gapOf(p1), gap2:gapOf(p2), abs1:absOf(p1), abs2:absOf(p2) };
+}
+function cmpRow(label, v1, v2, fmtFn, unit, mode) {
+  let d = "\u2014";
+  if (v1 !== null && v2 !== null) d = mode === "pt" ? signed(v2 - v1, 0) + " pt" : (v1 !== 0 ? signed((v2 / v1 - 1) * 100, 0) + " %" : "\u2014");
+  return "<tr><td>" + label + "</td><td>" + (v1 === null ? "\u2014" : fmtFn(v1) + (unit || "")) + "</td><td>" + (v2 === null ? "\u2014" : fmtFn(v2) + (unit || "")) + "</td><td class=\"b\">" + d + "</td></tr>";
+}
+function viewBilan(id) {
+  const p = P(id), B = S.bilan[id] || {}, cible = typeof B.cible === "number" ? B.cible : null;
+  const showTeam = B.showTeam !== false, showAbs = B.showAbs !== false;
+  const xs = MONTHS.map((_, m) => pm(p, m));
+  const dm = xs.map((x, m) => ({ x, m, adj:adjOf(x), ref:refAvg(m) })).filter((r) => r.x.has);
+  const longDate = (d) => d.toLocaleDateString("fr-FR", { day:"numeric", month:"long", year:"numeric" });
+  const date = longDate(new Date());
+  if (!dm.length) {
+    return { html:`<div class="ph noprint"><div><h1><span class="bar4" style="--c:${p.color}"></span>Bilan de ${esc(id)}</h1></div><a class="btn" href="${pHref(id)}">Retour à la fiche</a></div><p class="empty">Aucune donnée saisie pour ${esc(id)}. Saisissez au moins un mois pour obtenir un bilan.</p>`, after() {} };
+  }
+  const first = dm[0].m, last = dm[dm.length - 1].m;
+  const period = first === last ? MONTHS[first] : MONTHS[first] + " à " + MONTHS[last];
+  const mailT = dm.reduce((s, r) => s + r.x.mail, 0), echT = dm.reduce((s, r) => s + r.x.ech, 0), tot = mailT + echT;
+  const teamTot = dm.reduce((s, r) => s + vol(r.m).tot, 0), share = S.incl[id] && teamTot ? tot / teamTot : null;
+  const withAdj = dm.filter((r) => r.adj !== null);
+  const avgRaw = mean(dm.filter((r) => r.x.prod !== null).map((r) => r.x.prod)), avgAdj = mean(withAdj.map((r) => r.adj));
+  const avgMain = avgAdj !== null ? avgAdj : avgRaw;
+  const hasAdj = dm.some((r) => r.x.coef !== 1);
+  const cmp = dm.filter((r) => r.adj !== null && r.ref !== null), above = cmp.filter((r) => r.adj > r.ref).length;
+  const meanAdjC = mean(cmp.map((r) => r.adj)), meanRefC = mean(cmp.map((r) => r.ref));
+  const gap = cmp.length && meanRefC ? meanAdjC / meanRefC - 1 : null;
+  const bestAdj = withAdj.slice().sort((a, b) => b.adj - a.adj)[0];
+  const minA = withAdj.length ? Math.min.apply(null, withAdj.map((r) => r.adj)) : null, maxA = withAdj.length ? Math.max.apply(null, withAdj.map((r) => r.adj)) : null;
+  const jours = dm.reduce((s, r) => s + (r.x.jours || 0), 0), abs = dm.reduce((s, r) => s + r.x.abs, 0);
+  const presTot = dm.reduce((s, r) => s + (r.x.jours !== null ? r.x.jours - r.x.abs : 0), 0);
+  const nCible = cible !== null ? withAdj.filter((r) => r.adj >= cible).length : null;
+
+  /* Tendance : première moitié des mois contre seconde moitié */
+  const lbl = (l) => (l.length === 1 ? MONTHS[l[0].m] : MONTHS[l[0].m] + "\u2013" + MONTHS[l[l.length - 1].m]);
+  const gapOf = (l) => { const c = l.filter((r) => r.ref); return c.length ? mean(c.map((r) => r.adj)) / mean(c.map((r) => r.ref)) - 1 : null; };
+  let tr = null;
+  if (withAdj.length >= 4) {
+    const h = Math.ceil(withAdj.length / 2), l1 = withAdj.slice(0, h), l2 = withAdj.slice(h), a1 = mean(l1.map((r) => r.adj)), a2 = mean(l2.map((r) => r.adj));
+    if (a1) { const t = a2 / a1 - 1; tr = { t, a1, a2, n1:lbl(l1), n2:lbl(l2), g1:gapOf(l1), g2:gapOf(l2), label:Math.abs(t) < 0.05 ? "stable" : t > 0 ? "en hausse" : "en baisse" }; }
+  }
+
+  /* Synthèse */
+  let syn = `${esc(id)} a traité ${fmt(tot)} mails et échanges sur ${dm.length} mois, soit ${fmt(avgMain, 1)} par jour de présence en moyenne.`;
+  if (showTeam && gap !== null) {
+    const gt = Math.abs(gap) < 0.005 ? "dans la moyenne de référence de l'équipe" : fmt(Math.abs(gap * 100), 0) + " % " + (gap > 0 ? "au-dessus" : "en dessous") + " de la moyenne de référence de l'équipe";
+    syn += ` Ce niveau se situe ${gt}, avec ${above} mois sur ${cmp.length} au-dessus de la référence.`;
+  }
+  if (cible !== null) syn += ` L'objectif de ${fmt(cible, 1)} par jour est atteint sur ${nCible} mois sur ${withAdj.length}.`;
+  else if (tr) syn += ` La tendance sur la période est ${tr.label}.`;
+
+  /* Chiffres clés */
+  const card = (l, v, u, d1, d2) => `<div class="bl-card"><span class="l">${l}</span><span class="v">${v}${u ? `<small>${u}</small>` : ""}</span><span class="d">${d1 || ""}</span>${d2 ? `<span class="d">${d2}</span>` : ""}</div>`;
+  const cards = [];
+  cards.push(card("Volume traité", fmt(tot), "", `${fmt(mailT)} mails · ${fmt(echT)} échanges`, showTeam && share !== null ? `${fmt(share * 100, 0)} % du volume de l'équipe` : ""));
+  cards.push(card("Productivité moyenne", fmt(avgMain, 1), "/ jour", hasAdj && avgAdj !== null && avgRaw !== null ? `Brute : ${fmt(avgRaw, 1)} · avec majoration` : "Par jour de présence", bestAdj ? `Meilleur mois : ${MONTHS[bestAdj.m].toLowerCase()} (${fmt(bestAdj.adj, 1)})` : ""));
+  if (showTeam && gap !== null) cards.push(card("Position dans l'équipe", signed(gap * 100, 0) + " %", "", `Référence de l'équipe : ${fmt(meanRefC, 1)}`, `Au-dessus sur ${above} mois sur ${cmp.length}`));
+  else if (!showTeam && cible !== null) cards.push(card("Objectif", `${nCible} / ${withAdj.length}`, "mois", `Objectif : ${fmt(cible, 1)} par jour`, "Atteint, majoration comprise"));
+  if (minA !== null) cards.push(card("Régularité", `${fmt(minA, 0)}\u2013${fmt(maxA, 0)}`, "/ jour", "Plus bas et plus haut mois", tr ? `Tendance ${tr.label} (${signed(tr.t * 100, 0)} %)` : `${dm.length} mois saisis`));
+
+  /* Tableau mensuel réduit */
+  const th = `<th>Mois</th><th>Total traité</th>${showAbs ? "<th>Jours de présence</th>" : ""}<th>Par jour</th>${hasAdj ? "<th>Ajustée</th>" : ""}${showTeam ? "<th>Écart équipe</th>" : ""}`;
+  const rowsT = dm.map((r) => { const gp = r.adj !== null && r.ref ? r.adj / r.ref - 1 : null; return `<tr><td>${MONTHS[r.m]}</td><td>${fmt(r.x.tot)}</td>${showAbs ? `<td>${r.x.jours !== null ? fmtG(r.x.jours - r.x.abs) : "—"}</td>` : ""}<td>${fmt(r.x.prod, 1)}</td>${hasAdj ? `<td>${fmt(r.adj, 1)}</td>` : ""}${showTeam ? `<td class="${gp === null ? "" : gp >= 0 ? "gp" : "gn"}">${gp === null ? "—" : signed(gp * 100, 0) + " %"}</td>` : ""}</tr>`; }).join("");
+  const foot = `<tr><td>Période</td><td>${fmt(tot)}</td>${showAbs ? `<td>${fmtG(presTot)}</td>` : ""}<td>${fmt(avgRaw, 1)}</td>${hasAdj ? `<td>${fmt(avgAdj, 1)}</td>` : ""}${showTeam ? `<td>${gap === null ? "—" : signed(gap * 100, 0) + " %"}</td>` : ""}</tr>`;
+
+  /* Notes de lecture */
+  const notes = [];
+  notes.push(`Période analysée : ${period.toLowerCase()} (${dm.length} mois saisis).`);
+  const pcb = prevCtx();
+  if (pcb) {
+    const prv = dm.map((r) => ({ r, q:pm(p, r.m, pcb) })).filter((o) => o.q.has && o.q.prod !== null && o.r.x.prod !== null);
+    if (prv.length) {
+      const a = mean(prv.map((o) => o.q.prod)), b = mean(prv.map((o) => o.r.x.prod)), ta = prv.reduce((s, o) => s + o.q.tot, 0), tb = prv.reduce((s, o) => s + o.r.x.tot, 0);
+      notes.push(`Par rapport à ${S.year - 1} (mêmes mois, ${prv.length} mois comparables) : productivité moyenne de ${fmt(a, 1)} à ${fmt(b, 1)} (${signed(pctCh(a, b), 0)} %), volume traité de ${fmt(ta)} à ${fmt(tb)} (${signed(pctCh(ta, tb), 0)} %).`);
+    }
+  }
+  if (tr) notes.push(`Évolution : entre ${tr.n1} et ${tr.n2}, la productivité moyenne passe de ${fmt(tr.a1, 1)} à ${fmt(tr.a2, 1)} (${signed(tr.t * 100, 0)} %)${showTeam && tr.g1 !== null && tr.g2 !== null ? `, et l'écart avec l'équipe de ${signed(tr.g1 * 100, 0)} % à ${signed(tr.g2 * 100, 0)} %` : ""}.`);
+  if (showAbs && jours > 0) notes.push(abs > 0 ? `Absences : ${fmtG(abs)} jour${abs > 1 ? "s" : ""} sur ${fmtG(jours)} jours ouvrés (${fmt(abs / jours * 100, 1)} %).` : "Absences : aucune absence saisie sur la période.");
+  if (hasAdj) { const k = dm.filter((r) => r.x.coef !== 1); notes.push(`Productivité ajustée : majoration appliquée sur ${k.length} mois (${Array.from(new Set(k.map((r) => "×" + fmtG(r.x.coef)))).join(", ")}).`); }
+  MONTHS.forEach((mn, m) => { if (S.notes[id][m]) notes.push(`${mn} : ${S.notes[id][m]}`); });
+
+  /* Cadre d'entretien */
+  const ent = (key, label, hint, mh) => `<div class="bl-f"><h4>${label}</h4><textarea class="bl-ta noprint" data-bilan="${key}" rows="4" placeholder="${attr(hint)}" aria-label="${attr(label)}">${esc(B[key] || "")}</textarea><div class="pv" id="po_${key}" style="--mh:${mh}mm">${esc(B[key] || "")}</div></div>`;
+  const objRow = (i) => "<tr>" + ["o", "i", "e"].map((c) => { const k = "obj" + i + "_" + c; return `<td><input class="bl-in noprint" data-bilan="${k}" value="${attr(B[k] || "")}" autocomplete="off" aria-label="Objectif ${i + 1}, ${c === "o" ? "objectif" : c === "i" ? "indicateur" : "échéance"}"><div class="pv" id="po_${k}">${esc(B[k] || "")}</div></td>`; }).join("") + "</tr>";
+  const dEnt = B.date ? longDate(new Date(B.date + "T12:00:00")) : "";
+  const foot1 = (n) => `<footer class="bl-foot"><span>Document confidentiel · Bilan annuel ${S.year} · ${esc(id)}</span><span>Page ${n} / 2</span></footer>`;
+
+  const html = `
+  <div class="ph noprint"><div><h1><span class="bar4" style="--c:${p.color}"></span>Bilan de ${esc(id)}</h1><p>Document de 2 pages A4 : synthèse chiffrée, puis cadre d'entretien. Réglez le contenu ci-dessous, puis imprimez ou enregistrez en PDF.</p></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><a class="btn" href="${pHref(id)}">Retour à la fiche</a><button type="button" class="btn pri" data-action="print">Imprimer / PDF</button></div></div>
+  <section class="panel noprint bl-opts" style="margin-bottom:16px">
+    <h3 style="margin:0 0 10px;font-size:15px">Réglages du document</h3>
+    <div class="bl-optgrid">
+      <div class="fld"><label for="cible">Objectif de productivité (par jour, avec majoration)</label><input id="cible" data-bind="cible" data-id="${attr(id)}" inputmode="decimal" autocomplete="off" placeholder="ex. 45" value="${cible === null ? "" : attr(String(cible).replace(".", ","))}"></div>
+      <div class="fld"><label for="bmanager">Manager</label><input id="bmanager" data-bind="bmeta" data-key="manager" autocomplete="off" value="${attr(B.manager || "")}"></div>
+      <div class="fld"><label for="bdate">Date de l'entretien</label><input id="bdate" type="date" data-bind="bmeta" data-key="date" value="${attr(B.date || "")}"></div>
+    </div>
+    <div class="bl-checks"><label class="sw"><input type="checkbox" data-bind="bopt" data-key="showTeam"${showTeam ? " checked" : ""}> Afficher la comparaison avec l'équipe</label><label class="sw"><input type="checkbox" data-bind="bopt" data-key="showAbs"${showAbs ? " checked" : ""}> Afficher les absences</label></div>
+    ${p.flag && S.year === BASE_YEAR ? `<p class="note-line">Remarque interne, non imprimée : ${esc(p.flag)}</p>` : ""}
+  </section>
+  <article class="bilan">
+    <section class="bl-page">
+      <header class="bl-head"><div><div class="bl-kicker">Bilan annuel · ${S.year}</div><h2>${esc(id)}</h2></div>
+        <dl class="bl-meta"><div><dt>Période</dt><dd>${esc(period)}</dd></div><div><dt>Manager</dt><dd>${esc(B.manager || "—")}</dd></div><div><dt>Édité le</dt><dd>${esc(date)}</dd></div></dl></header>
+      <p class="bl-syn">${syn}</p>
+      <h3 class="bl-h">Chiffres clés</h3>
+      <div class="bl-cards" style="grid-template-columns:repeat(${cards.length},minmax(0,1fr))">${cards.join("")}</div>
+      <h3 class="bl-h">Productivité mensuelle</h3>
+      <div class="lg" style="margin-bottom:6px"><span><i style="--c:var(--brand)"></i>${esc(id)}${hasAdj ? " (majoration comprise)" : ""}</span>${showTeam ? `<span><i style="--c:var(--muted)"></i>Moyenne de référence</span>` : ""}${cible !== null ? `<span><i style="--c:var(--ink)"></i>Objectif</span>` : ""}</div>
+      <div class="chart" id="chLine" data-pw="680" data-ph="135"></div>
+      <h3 class="bl-h">Détail par mois</h3>
+      <div class="bl-tw"><table class="bl-t${dm.length > 8 ? " dense" : ""}"><thead><tr>${th}</tr></thead><tbody>${rowsT}</tbody><tfoot>${foot}</tfoot></table></div>
+      <h3 class="bl-h">Notes de lecture</h3>
+      <ul class="bl-notes">${notes.map((c) => `<li>${esc(c)}</li>`).join("")}</ul>
+      ${foot1(1)}
+    </section>
+    <section class="bl-page">
+      <header class="bl-head bl-head2"><div><div class="bl-kicker">Entretien annuel · ${S.year}</div><h2>${esc(id)}</h2></div>
+        <dl class="bl-meta"><div><dt>Période</dt><dd>${esc(period)}</dd></div><div><dt>Manager</dt><dd>${esc(B.manager || "—")}</dd></div></dl></header>
+      ${ent("bilan", "Bilan de l'année", "Faits marquants, contexte, ce qui a changé sur la période.", 32)}
+      <div class="bl-2" style="margin-top:12px">${ent("forts", "Points forts", "Réussites, compétences, contributions à valoriser.", 42)}${ent("progres", "Axes de progrès", "Points à travailler, difficultés rencontrées.", 42)}</div>
+      <h3 class="bl-h">Objectifs pour la période à venir</h3>
+      <div class="bl-tw"><table class="bl-t bl-obj"><thead><tr><th style="width:52%">Objectif</th><th style="width:30%">Indicateur de suivi</th><th style="width:18%">Échéance</th></tr></thead><tbody>${[0, 1, 2].map(objRow).join("")}</tbody></table></div>
+      <div style="margin-top:12px">${ent("formation", "Formation et accompagnement souhaités", "Besoins de formation, soutien du manager, moyens à prévoir.", 24)}</div>
+      <div style="margin-top:12px">${ent("comm", "Avis du collaborateur", "Remarques du collaborateur et suites à donner.", 30)}</div>
+      <div class="bl-sigs"><div class="bl-sig"><span>Date de l'entretien</span><b>${esc(dEnt)}</b></div><div class="bl-sig"><span>Le manager</span><b>${esc(B.manager || "")}</b></div><div class="bl-sig"><span>Le collaborateur</span><b>${esc(id)}</b></div></div>
+      ${foot1(2)}
+    </section>
+  </article>`;
+  return { html, after() {
+    mount($("#chLine"), (el) => drawLine(el, { labels:M3, height:190, aria:"Productivité de " + id + " par mois", series:[
+      { name:id, color:"var(--brand)", vals:xs.map((x) => adjOf(x)) }
+    ].concat(showTeam ? [{ name:"Moyenne de référence", color:"var(--muted)", dash:true, noDots:true, vals:M3.map((_, m) => (xs[m].has ? refAvg(m) : null)) }] : [])
+     .concat(cible !== null ? [{ name:"Objectif", color:"var(--ink)", dash:"2 3", noDots:true, vals:xs.map((x) => (x.has ? cible : null)) }] : []) }));
+  } };
+}
+
+/* ---------- Rapport mensuel (document A4) ---------- */
+const RPT_OPT = { abs:true, persons:true };
+function viewReport() {
+  const m = S.month, y = S.year, mn = MONTHS[m].toLowerCase(), o = RPT_OPT;
+  const v = vol(m), pv = m > 0 ? vol(m - 1) : null, cad = cadence(m), pcad = m > 0 ? cadence(m - 1) : 0, ra = refAvg(m), ry = refYtd();
+  const pc = prevCtx(), py = y - 1, v1 = pc ? vol(m, pc) : null, cad1 = pc ? cadence(m, pc) : 0, ra1 = pc ? refAvg(m, pc) : null;
+  let ytdC = 0, ytdP = 0; for (let k = 0; k <= m; k++) { ytdC += vol(k).tot; if (pc) ytdP += vol(k, pc).tot; }
+  const rows = adjList(m).sort((a, b) => b.adj - a.adj), tot = rows.reduce((s, r) => s + r.adj, 0);
+  const people = PEOPLE.filter((p) => pm(p, m).has), empty = !people.length;
+  const hasCli = people.some((p) => pm(p, m).cli > 0), hasUrg = people.some((p) => pm(p, m).urg > 0);
+  const date = new Date().toLocaleDateString("fr-FR", { day:"numeric", month:"long", year:"numeric" });
+  const notes = teamNotes().filter((n) => n.m === m).map((n) => ({ who:"Équipe", t:n.t }))
+    .concat(PEOPLE.filter((p) => S.notes[p.id][m]).map((p) => ({ who:p.id, t:S.notes[p.id][m] })))
+    .concat(y === BASE_YEAR ? people.filter((p) => p.flag).map((p) => ({ who:p.id, t:p.flag })) : []);
+  const grouped = []; notes.forEach((n) => { const g = grouped.find((x) => x.t === n.t); if (g) g.who += ", " + n.who; else grouped.push({ who:n.who, t:n.t }); });
+  const ys = yearVolSeries(vol);
+
+  let syn = `En ${mn}, l'équipe a traité ${fmt(v.tot)} mails et échanges`;
+  if (pv && pv.tot) { const d = (v.tot / pv.tot - 1) * 100; syn += `, ${d >= 0 ? "en hausse" : "en baisse"} de ${fmt(Math.abs(d), 0)} % par rapport à ${MONTHS[m - 1].toLowerCase()}`; }
+  syn += `, pour une cadence de ${fmt(cad, 1)} par jour.`;
+  if (ra) syn += ` La moyenne de référence s'établit à ${fmt(ra, 1)}${ry ? ` (${fmt(ry.v, 1)} depuis janvier)` : ""}.`;
+  if (v1 && v1.tot) { const d = (v.tot / v1.tot - 1) * 100; syn += ` Par rapport à ${mn} ${py}, le volume est ${d >= 0 ? "en hausse" : "en baisse"} de ${fmt(Math.abs(d), 0)} %.`; }
+
+  const card = (l, val, unit, d1, d2) => `<div class="bl-card"><span class="l">${l}</span><span class="v">${val}${unit ? `<small>${unit}</small>` : ""}</span><span class="d">${d1 || ""}</span>${d2 ? `<span class="d">${d2}</span>` : ""}</div>`;
+  const dd = (a, b, lbl) => deltaTxt(a, b, lbl);
+  const join = (...a) => a.filter(Boolean).join(" · ");
+  const cards = [
+    card("Total traité", fmt(v.tot), "", `${fmt(v.mail)} mails · ${fmt(v.ech)} échanges`, join(pv && pv.tot ? dd(v.tot, pv.tot, "vs " + MONTHS[m - 1].toLowerCase()) : "", v1 && v1.tot ? dd(v.tot, v1.tot, "vs " + py) : "")),
+    card("Cadence de l'équipe", fmt(cad, 1), "/ jour", "Somme des productivités ajustées", join(pcad ? dd(cad, pcad, "vs " + MONTHS[m - 1].toLowerCase()) : "", cad1 ? dd(cad, cad1, "vs " + py) : "")),
+    card("Moyenne de référence", ra ? fmt(ra, 1) : "—", "/ jour", ry ? `Depuis janvier : ${fmt(ry.v, 1)}` : "", ra && ra1 ? dd(ra, ra1, "vs " + py) : ""),
+    card("Cumul depuis janvier", fmt(ytdC), "", `Janvier à ${mn}`, ytdP ? dd(ytdC, ytdP, "vs même période " + py) : "")
+  ];
+
+  const th = `<th>Personne</th><th>Mails</th><th>Échanges</th>${hasCli ? "<th>Clients</th>" : ""}${hasUrg ? "<th>Urgences</th>" : ""}${o.abs ? "<th>Jours de présence</th>" : ""}<th>Total</th><th>Par jour</th><th>Ajustée</th><th>Part</th>`;
+  const trs = rows.map((r) => { const x = r.x, pres = x.jours !== null ? x.jours - x.abs : null; return `<tr><td><span class="pn"><i style="--c:${r.p.color}"></i>${esc(r.p.id)}</span></td><td>${fmt(x.mail)}</td><td>${fmt(x.ech)}</td>${hasCli ? `<td>${fmt(x.cli)}</td>` : ""}${hasUrg ? `<td>${fmt(x.urg)}</td>` : ""}${o.abs ? `<td>${fmtG(pres)}</td>` : ""}<td class="b">${fmt(x.tot)}</td><td>${fmt(x.prod, 1)}</td><td class="b">${fmt(r.adj, 1)}${x.coef !== 1 ? ` <small>×${fmtG(x.coef)}</small>` : ""}</td><td>${tot ? fmt(r.adj / tot * 100, 1) + " %" : "—"}</td></tr>`; }).join("");
+  const foot = `<tr><td>Équipe</td><td>${fmt(v.mail)}</td><td>${fmt(v.ech)}</td>${hasCli ? `<td>${fmt(v.cli)}</td>` : ""}${hasUrg ? `<td>${fmt(v.urg)}</td>` : ""}${o.abs ? "<td></td>" : ""}<td>${fmt(v.tot)}</td><td></td><td>${fmt(cad, 1)}</td><td>100 %</td></tr>`;
+  const legR = `<div class="lg"><span><i style="--c:var(--brand)"></i>Moyenne du mois</span><span><i style="--c:var(--muted)"></i>Depuis janvier</span>${pc && M3.some((_, k) => refAvg(k, pc) !== null) ? `<span><i style="--c:var(--c-ech)"></i>${py}</span>` : ""}</div>`;
+
+  const html = `
+  <div class="ph noprint"><div><h1>Rapport mensuel</h1><p>Une page A4 prête à imprimer ou à enregistrer en PDF (choisissez « Enregistrer au format PDF » dans la fenêtre d'impression).</p></div>
+    <div class="ctrl" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">${monthPicker()}<button type="button" class="btn pri" data-action="print">Imprimer / PDF</button></div></div>
+  <section class="panel noprint" style="margin-bottom:16px"><div style="display:flex;flex-wrap:wrap;gap:8px 24px;align-items:center"><span class="sub">Dans le document :</span>
+    <label class="sw"><input type="checkbox" data-bind="rptopt" data-key="persons"${o.persons ? " checked" : ""}> Détail par personne</label>
+    <label class="sw"><input type="checkbox" data-bind="rptopt" data-key="abs"${o.abs ? " checked" : ""}> Absences et jours de présence</label></div></section>
+  <article class="bilan"><section class="bl-page">
+    <header class="bl-head"><div><div class="bl-kicker">Rapport mensuel · ${y}</div><h2>${MONTHS[m]} ${y}</h2></div>
+      <dl class="bl-meta"><div><dt>Équipe</dt><dd>${people.length} personne${people.length > 1 ? "s" : ""}</dd></div><div><dt>Édité le</dt><dd>${esc(date)}</dd></div></dl></header>
+    ${empty ? `<p class="empty">Aucune donnée saisie pour ce mois.</p>` : `
+    <p class="bl-syn">${esc(syn)}</p>
+    <h3 class="bl-h">Chiffres clés</h3>
+    <div class="bl-cards" style="grid-template-columns:repeat(4,minmax(0,1fr))">${cards.join("")}</div>
+    <h3 class="bl-h">Volume et moyenne de référence</h3>
+    <div class="bl-2">
+      <div>${legendVol({ cli:ys.some((s) => s.name === "Échanges clients"), urg:ys.some((s) => s.name === "Urgences") })}<div class="chart" id="chVol" data-pw="320" data-ph="170"></div></div>
+      <div>${legR}<div class="chart" id="chRef" data-pw="320" data-ph="170"></div></div>
+    </div>
+    ${o.persons ? `<h3 class="bl-h">Détail par personne</h3>
+    <div class="bl-tw"><table class="bl-t${rows.length > 6 ? " dense" : ""}"><thead><tr>${th}</tr></thead><tbody>${trs}</tbody><tfoot>${foot}</tfoot></table></div>
+    <p class="bl-note">Classement par productivité ajustée (par jour de présence, majoration comprise). La ligne Équipe additionne les personnes comptées dans le total.</p>` : ""}
+    ${grouped.length ? `<h3 class="bl-h">Remarques</h3><ul class="bl-notes">${grouped.map((n) => `<li><b>${esc(n.who)}</b> : ${esc(n.t)}</li>`).join("")}</ul>` : ""}`}
+    <footer class="bl-foot"><span>Document confidentiel · Rapport mensuel ${MONTHS[m]} ${y}</span><span>Page 1 / 1</span></footer>
+  </section></article>`;
+  return { html, after() {
+    if (empty) return;
+    mount($("#chVol"), (el) => drawStacked(el, { labels:M3, series:ys, sel:m, height:190, aria:"Volume traité par mois" }));
+    mount($("#chRef"), (el) => drawRef(el, m, { height:190, noPick:true }));
+  } };
+}
+
+/* ---------- Formules ---------- */
+function xlLines(list) {
+  return "<div class=\"xl head\"><span>Cellule</span><span>Formule Excel</span><span>Résultat</span></div>" + list.map((l) => "<div class=\"xl\"><span class=\"a\">" + esc(l.a) + "</span><span class=\"f\">" + esc(l.f) + "</span><span class=\"r\"><b>" + esc(l.r) + "</b></span></div>").join("");
+}
+function fCard(title, plain, ex, lines) { lines = (lines || []).filter(Boolean); return "<div class=\"fc\"><h3>" + title + "</h3><p class=\"cl\">" + plain + "</p>" + (ex ? "<p class=\"ex\">" + ex + "</p>" : "") + (lines && lines.length ? xlLines(lines) : "") + "</div>"; }
+function viewFormulas() {
+  if (!P(S.fx.p)) S.fx.p = "Anais";
+  const p = P(S.fx.p), m = S.fx.m, L = LAY[p.layout], x = pm(p, m), row = m + 2, tr = m + 3;
+  const all4 = all4of(p, m);
+  const xlx = (sheet, a) => { if (sheet === "Total" && !book.sheets.Total) return null; const raw = book.getRaw(sheet, a); return { a:(sheet === "Total" ? "Total!" : p.id + "!") + a, f:typeof raw === "string" && raw.startsWith("=") ? raw : (raw === undefined ? "(vide)" : String(raw)), r:(() => { const v = book.value(sheet, a); return typeof v === "number" ? fmtG(v) : v && v.e ? v.e : v == null ? "" : String(v); })() }; };
+  const tc = TOTAL_COL[p.id];
+  const teamAdj = adjList(m), cad = teamAdj.reduce((s, r) => s + r.adj, 0), ra = refAvg(m), v = vol(m);
+  const jmin = x.jours !== null ? x.jours - x.abs : null;
+  const html =
+  "<div class=\"ph\"><div><h1>Formules</h1><p>Comment chaque chiffre est calculé, avec la formule Excel d'origine et un exemple sur vos données.</p></div></div>" +
+  "<section class=\"panel\"><div class=\"phd\"><div><h2>Exemple choisi</h2><p class=\"sub\">Changez la personne ou le mois : les formules et les chiffres suivent.</p></div>" +
+    "<div class=\"mp\"><select data-bind=\"fxp\" aria-label=\"Personne\">" + PEOPLE.map((q) => "<option value=\"" + attr(q.id) + "\"" + (q.id === p.id ? " selected" : "") + ">" + esc(q.id) + "</option>").join("") + "</select>" +
+    "<select data-bind=\"fxm\" aria-label=\"Mois\">" + MONTHS.map((n, i) => "<option value=\"" + i + "\"" + (i === m ? " selected" : "") + ">" + n + "</option>").join("") + "</select></div></div>" +
+    "<h2 style=\"margin:8px 0 12px\">Fiche individuelle</h2><div class=\"fgrid two\">" +
+    fCard("Total", all4 ? ("Mails + échanges + échanges clients + urgences" + (S.year === BASE_YEAR ? " (comptés depuis septembre)." : ".")) : "Mails + échanges.", x.has ? (all4 ? fmt(x.mail) + " + " + fmt(x.ech) + " + " + fmt(x.cli) + " + " + fmt(x.urg) : fmt(x.mail) + " + " + fmt(x.ech)) + " = " + fmt(x.tot) : "Pas de données pour ce mois.", [xlx(p.id, L.tot + row)]) +
+    fCard("Moyenne par jour ouvré", "Total ÷ nombre de jours du mois.", x.has && x.jours ? fmt(x.tot) + " ÷ " + fmtG(x.jours) + " = " + fmt(x.moy, 2) : "—", [xlx(p.id, L.moy + row)]) +
+    fCard("Productivité par jour de présence", "Total ÷ (jours du mois − absences).", x.has && jmin ? fmt(x.tot) + " ÷ (" + fmtG(x.jours) + " − " + fmtG(x.abs) + ") = " + fmt(x.prod, 2) : "—", [xlx(p.id, L.prod + row)]) +
+    fCard("Moyenne annuelle", "Le logiciel fait la moyenne des mois saisis. Excel fait la moyenne des 12 mois, mois vides compris (à 0), ce qui tire le résultat vers le bas.", personAvg(p) === null ? "—" : "Logiciel : " + fmt(personAvg(p), 2) + (L.avg && numOf(book.value(p.id, L.avg)) !== null ? " · Excel : " + fmt(numOf(book.value(p.id, L.avg)), 2) : ""), L.avg && book.getRaw(p.id, L.avg) !== undefined ? [xlx(p.id, L.avg)] : []) +
+    "</div>" +
+    "<h2 style=\"margin:22px 0 12px\">Équipe, en " + MONTHS[m].toLowerCase() + "</h2><div class=\"fgrid two\">" +
+    fCard("Productivité ajustée", "Productivité × coefficient de la personne (majoration pour saisie manquante). Le coefficient se règle dans « Modifier » sur la fiche du mois.", x.has && x.prod !== null ? fmt(x.prod, 2) + " × " + fmtG(x.coef) + " = " + fmt(x.prod * x.coef, 2) : "—", tc && book.getRaw("Total", tc + tr) !== undefined ? [xlx("Total", tc + tr)] : []) +
+    fCard("Cadence de l'équipe", "Somme des productivités ajustées de toutes les personnes ayant des données.", cad ? fmt(cad, 2) : "—", [xlx("Total", "K" + tr)].concat(cad ? [{ a:"Logiciel", f:teamAdj.map((r) => r.p.id).join(" + "), r:fmt(cad, 2) }] : [])) +
+    fCard("Moyenne de référence", "Moyenne des productivités ajustées, sur les personnes ayant des données ce mois-là. " + refNote() + ".", ra !== null ? fmt(ra, 2) : "—", [xlx("Total", "L" + tr)]) +
+    fCard("Moyenne de référence depuis janvier", "Moyenne des moyennes de référence de tous les mois saisis. Excel fait la moyenne des 12 mois, mois vides compris (à 0), ce qui tire le résultat vers le bas.", refYtd() ? "Logiciel : " + fmt(refYtd().v, 2) + " sur " + refYtd().n + " mois" + (book.sheets.Total ? " · Excel : " + fmt(numOf(book.value("Total", "L15")), 2) : "") : "—", [xlx("Total", "L15")]) +
+    fCard("Total traité de l'équipe", "Mails + échanges de toutes les personnes comptées dans l'équipe.", v.tot ? fmt(v.mail) + " + " + fmt(v.ech) + " = " + fmt(v.tot) : "—", [xlx("Total", "O" + tr), xlx("Total", "P" + tr), xlx("Total", "Q" + tr)]) +
+    fCard("Part de chacun", "Productivité ajustée de la personne ÷ cadence de l'équipe du même mois.", x.has && x.prod !== null && cad ? fmt(x.prod * x.coef, 2) + " ÷ " + fmt(cad, 2) + " = " + fmt(x.prod * x.coef / cad * 100, 1) + " %" : "—", tc && book.getRaw("Total", tc + (m + 18)) !== undefined ? [xlx("Total", tc + (m + 18))] : []) +
+    "</div></section>" +
+  (book.sheets.Total ? "<section class=\"diff\" style=\"margin-top:16px\"><h3>Ce qui diffère du fichier Excel</h3><p style=\"margin:0\">Les formules par personne sont identiques. Sur la feuille Total, le logiciel applique la même règle tous les mois :</p><ul>" +
+    "<li>Le total traité additionne toute l'équipe. Dans Excel, de juin à décembre, certaines colonnes oublient des personnes.</li>" +
+    "<li>La moyenne de référence porte toujours sur les mêmes personnes. Dans Excel, la liste change d'un mois à l'autre.</li>" +
+    "<li>Chaque part est calculée sur la cadence de son propre mois. Dans Excel, certaines formules divisent par le total d'un autre mois.</li>" +
+    "<li>La moyenne annuelle ne compte que les mois saisis.</li></ul></section>" : "");
+  return { html, after() {} };
+}
+
+/* ---------- Réglages ---------- */
+function viewSettings() {
+  const html =
+  "<div class=\"ph\"><div><h1>Réglages</h1><p>Vos données sont enregistrées automatiquement sur cet appareil, dans ce navigateur.</p></div></div>" +
+  "<section class=\"panel set\">" +
+    "<div class=\"setrow\"><div><h3>Apparence</h3><p>Suit le réglage de votre appareil par défaut.</p></div><div class=\"seg\" role=\"group\" aria-label=\"Thème\">" + [["auto", "Auto"], ["light", "Clair"], ["dark", "Sombre"]].map((t) => "<button type=\"button\" data-action=\"theme\" data-v=\"" + t[0] + "\" aria-pressed=\"" + (S.theme === t[0]) + "\">" + t[1] + "</button>").join("") + "</div></div>" +
+    "<div class=\"setrow\"><div><h3>Années</h3><p>Chaque année garde ses propres chiffres. Une nouvelle année démarre vide, avec les jours ouvrés français calculés automatiquement (jours fériés compris) et des coefficients à 1. Années existantes : " + yearsList().join(", ") + ".</p></div><div style=\"display:flex;gap:8px;flex-wrap:wrap;align-items:center\"><div class=\"fld\" style=\"width:110px\"><label for=\"newYear\" class=\"sr\">Nouvelle année</label><input id=\"newYear\" type=\"number\" min=\"2000\" max=\"2100\" value=\"" + (Math.max.apply(null, yearsList()) + 1) + "\"></div><button type=\"button\" class=\"btn\" data-action=\"year-add\">Ajouter</button></div></div>" +
+    "<div class=\"setrow\"><div><h3>Supprimer l'année affichée</h3><p>Efface définitivement les chiffres de " + S.year + ". L'année " + BASE_YEAR + " ne peut pas être supprimée (vous pouvez la remettre à zéro).</p></div><button type=\"button\" class=\"btn dng\" data-action=\"year-del\"" + (S.year === BASE_YEAR ? " disabled" : "") + ">Supprimer " + S.year + "</button></div>" +
+    "<div class=\"setrow\"><div><h3>Enregistrer une copie</h3><p>Télécharge un fichier de sauvegarde avec toutes vos saisies, toutes années comprises. Utile pour changer d'appareil ou partager les chiffres.</p></div><button type=\"button\" class=\"btn\" data-action=\"export\">Exporter (.json)</button></div>" +
+    "<div class=\"setrow\"><div><h3>Restaurer une copie</h3><p>Remplace les données actuelles par celles d'un fichier exporté.</p></div><button type=\"button\" class=\"btn\" data-action=\"import\">Importer un fichier</button></div>" +
+    "<div class=\"setrow\"><div><h3>Remettre l'année " + BASE_YEAR + " à zéro</h3><p>Efface les chiffres de l'année " + BASE_YEAR + ". Les autres années ne sont pas touchées.</p></div><button type=\"button\" class=\"btn dng\" data-action=\"reset\">Remettre à zéro</button></div>" +
+  "</section>";
+  return { html, after() {} };
+}
+
+/* =====================================================================
+   7. Saisie d'un mois
+   ===================================================================== */
+function ensureFormulas(p, m) {
+  const L = LAY[p.layout], r = m + 2, all4 = all4of(p, m);
+  if (!book.isFormula(p.id, L.tot + r)) book.setRaw(p.id, L.tot + r, all4 ? "=SUM(B" + r + ":E" + r + ")" : "=SUM(B" + r + ":C" + r + ")");
+  if (!book.isFormula(p.id, L.moy + r)) book.setRaw(p.id, L.moy + r, "=" + L.tot + r + "/" + L.jours + r);
+  if (!book.isFormula(p.id, L.prod + r)) book.setRaw(p.id, L.prod + r, "=" + L.tot + r + "/(" + L.jours + r + "-" + L.abs + r + ")");
+}
+let dlgInitial = null;
+function dlgSnapshot() {
+  const o = {};
+  $("#dlg").querySelectorAll("[data-f]").forEach((el) => { o[el.dataset.f] = el.value; });
+  return o;
+}
+function dlgDirty() {
+  if (!dlgInitial) return false;
+  const now = dlgSnapshot();
+  return Object.keys(now).some((k) => now[k] !== dlgInitial[k]);
+}
+function openEdit(pid, m) {
+  const p = P(pid), L = LAY[p.layout], all4 = all4of(p, m);
+  const fields = [["mail", "Mails"], ["ech", "Échanges"]].concat(L.cli ? [["cli", "Échanges clients"], ["urg", "Urgences"]] : []).concat([["jours", "Jours du mois"], ["abs", "Absences (jours)"]]);
+  const cur = (f) => { const v = book.getRaw(p.id, L[f] + (m + 2)); return v === undefined || v === null ? "" : String(v).replace(".", ","); };
+  const dlg = $("#dlg");
+  dlg.innerHTML =
+    "<div class=\"dh\"><div><h2 id=\"dlgTitle\">" + esc(pid) + " · " + MONTHS[m] + "</h2><p>Renseignez les chiffres du mois. Laissez vide ce qui n'existe pas.</p></div><button type=\"button\" class=\"ib\" data-action=\"close-dlg\" aria-label=\"Fermer\">×</button></div>" +
+    "<div class=\"db\"><div class=\"ff\">" + fields.map((f) => "<div class=\"fld\"><label for=\"f_" + f[0] + "\">" + f[1] + "</label><input id=\"f_" + f[0] + "\" data-f=\"" + f[0] + "\" inputmode=\"decimal\" autocomplete=\"off\" value=\"" + attr(cur(f[0])) + "\"></div>").join("") +
+    "<div class=\"fld\"><label for=\"f_coef\">Coefficient de majoration</label><input id=\"f_coef\" data-f=\"coef\" inputmode=\"decimal\" autocomplete=\"off\" value=\"" + attr(String(S.coef[p.id][m]).replace(".", ",")) + "\"><small>1 = aucune majoration. 1,1 = +10 %.</small></div>" +
+    "<div class=\"fld w\"><label for=\"f_note\">Remarque</label><input id=\"f_note\" data-f=\"note\" autocomplete=\"off\" value=\"" + attr(S.notes[p.id][m]) + "\"></div></div>" +
+    "<div class=\"calc\" id=\"calc\" aria-live=\"polite\"></div></div>" +
+    "<div class=\"df\"><button type=\"button\" class=\"btn\" data-action=\"close-dlg\">Annuler</button><button type=\"button\" class=\"btn pri\" data-action=\"save-dlg\" data-p=\"" + attr(pid) + "\" data-m=\"" + m + "\">Enregistrer</button></div>";
+  const upd = () => {
+    const g = (k) => { const el = dlg.querySelector("[data-f=\"" + k + "\"]"); const n = el ? parseNum(el.value) : undefined; return n === null || n === undefined ? 0 : n; };
+    const tot = g("mail") + g("ech") + (all4 ? g("cli") + g("urg") : 0), j = g("jours"), a = g("abs"), c = g("coef") || 1;
+    const moy = j > 0 ? tot / j : null, prod = j - a > 0 ? tot / (j - a) : null;
+    $("#calc").innerHTML =
+      "<div><span>Total (" + (all4 ? "mails + échanges + clients + urgences" : "mails + échanges") + ")</span><b>" + fmt(tot) + "</b></div>" +
+      "<div><span>Moyenne par jour du mois (total ÷ jours)</span><b>" + fmt(moy, 2) + "</b></div>" +
+      "<div><span>Productivité par jour de présence (total ÷ (jours − absences))</span><b>" + fmt(prod, 2) + "</b></div>" +
+      "<div><span>Avec le coefficient × " + fmtG(c) + "</span><b>" + fmt(prod === null ? null : prod * c, 2) + "</b></div>";
+  };
+  dlg.oninput = upd; upd();
+  if (dlg.showModal) dlg.showModal(); else dlg.setAttribute("open", "");
+  dlgInitial = dlgSnapshot();
+  const first = dlg.querySelector("[data-f=\"mail\"]"); if (first) first.focus();
+}
+function saveEdit(pid, m) {
+  const p = P(pid), L = LAY[p.layout], dlg = $("#dlg"), r = m + 2;
+  const val = (k) => { const el = dlg.querySelector("[data-f=\"" + k + "\"]"); return el ? parseNum(el.value) : undefined; };
+  const bad = ["mail", "ech", "cli", "urg", "jours", "abs", "coef"].filter((k) => val(k) === null);
+  if (bad.length) { toast("Certaines valeurs ne sont pas des nombres."); return; }
+  ["mail", "ech", "cli", "urg", "jours", "abs"].forEach((k) => { if (L[k]) book.setRaw(p.id, L[k] + r, val(k)); });
+  ensureFormulas(p, m);
+  const c = val("coef"); S.coef[p.id][m] = c === undefined ? 1 : c;
+  S.notes[p.id][m] = dlg.querySelector("[data-f=\"note\"]").value.trim();
+  if (L.note) book.setRaw(p.id, L.note + r, S.notes[p.id][m] || undefined);
+  book.valCache.clear(); save(); dlgInitial = null; closeDlg(true); render(true); toast("Enregistré");
+}
+function closeDlg(force) {
+  if (!force && dlgDirty() && !window.confirm("Fermer sans enregistrer les modifications ?")) return false;
+  dlgInitial = null;
+  const d = $("#dlg"); if (d.close) d.close(); else d.removeAttribute("open");
+  return true;
+}
+
+/* =====================================================================
+   8. Événements et affichage
+   ===================================================================== */
+document.addEventListener("click", (e) => {
+  const pick = e.target.closest("[data-pick]");
+  if (pick) { S.month = +pick.dataset.pick; render(true); return; }
+  const a = e.target.closest("[data-action]"); if (!a) return;
+  const act = a.dataset.action;
+  if (act === "mprev") { S.month = (S.month + 11) % 12; render(true); }
+  else if (act === "mnext") { S.month = (S.month + 1) % 12; render(true); }
+  else if (act === "print") window.print();
+  else if (act === "present") document.body.classList.add("presenting");
+  else if (act === "present-exit") document.body.classList.remove("presenting");
+  else if (act === "edit") openEdit(a.dataset.p, +a.dataset.m);
+  else if (act === "save-dlg") saveEdit(a.dataset.p, +a.dataset.m);
+  else if (act === "close-dlg") closeDlg();
+  else if (act === "toggle-line") { S.lineOff[a.dataset.id] = !S.lineOff[a.dataset.id]; render(true); }
+  else if (act === "cmp-toggle") {
+    const id = route().id, l = (S.cmp[id] = S.cmp[id] || []), m = +a.dataset.m, i = l.indexOf(m);
+    if (i >= 0) l.splice(i, 1); else l.push(m);
+    render(true);
+  }
+  else if (act === "cmp-clear") { S.cmp[route().id] = []; render(true); }
+  else if (act === "cmp-preset") {
+    const id = route().id, pp = P(id), has = MONTHS.map((_, m) => (pm(pp, m).has ? m : -1)).filter((m) => m >= 0), v = a.dataset.v;
+    S.cmp[id] = v === "all" ? has : v === "last3" ? has.slice(-3) : has.slice(-2); render(true);
+  }
+  else if (act === "cmp-print") { document.body.classList.add("print-cmp"); window.print(); }
+  else if (act === "theme") { S.theme = a.dataset.v; applyTheme(); save(); render(true); }
+  else if (act === "export") {
+    const blob = new Blob([JSON.stringify(payload(), null, 1)], { type:"application/json" }), u = URL.createObjectURL(blob), l = document.createElement("a");
+    l.href = u; l.download = "productivite-easy.json"; document.body.appendChild(l); l.click(); l.remove(); setTimeout(() => URL.revokeObjectURL(u), 500);
+  }
+  else if (act === "import") $("#importFile").click();
+  else if (act === "year-add") addYear(parseInt($("#newYear").value, 10));
+  else if (act === "year-del") removeYear(S.year);
+  else if (act === "reset") {
+    if (!window.confirm("Effacer les chiffres de " + BASE_YEAR + " ?")) return;
+    stash(); YEARS[BASE_YEAR] = baseDefault(); if (S.year === BASE_YEAR) activate(BASE_YEAR); else prevCache = {};
+    save(); render(true); toast("Année remise à zéro");
+  }
+});
+document.addEventListener("input", (e) => {
+  const f = e.target.dataset && e.target.dataset.bilan; if (!f) return;
+  const id = route().id; (S.bilan[id] = S.bilan[id] || {})[f] = e.target.value;
+  const po = $("#po_" + f); if (po) po.textContent = e.target.value;
+  save();
+});
+document.addEventListener("change", (e) => {
+  const b = e.target.dataset && e.target.dataset.bind; if (!b) return;
+  if (b === "cible") { const n = parseNum(e.target.value); (S.bilan[e.target.dataset.id] = S.bilan[e.target.dataset.id] || {}).cible = n === null ? undefined : n; save(); render(true); return; }
+  if (b === "year") { switchYear(+e.target.value); return; }
+  if (b === "projBase") { S.proj.base = e.target.value; render(true); return; }
+  if (b === "goal") { const n = parseNum(e.target.value); if (n === null) { toast("Valeur non numérique."); return; } if (n === undefined) delete S.goal[S.year]; else S.goal[S.year] = n; save(); render(true); return; }
+  if (b === "rptopt") { RPT_OPT[e.target.dataset.key] = e.target.checked; render(true); return; }
+  if (b === "cmpopt") { CMP_OPT[e.target.dataset.key] = e.target.checked; render(true); return; }
+  if (b === "bmeta") { const id = route().id; (S.bilan[id] = S.bilan[id] || {})[e.target.dataset.key] = e.target.value; save(); render(true); return; }
+  if (b === "bopt") { const id = route().id; (S.bilan[id] = S.bilan[id] || {})[e.target.dataset.key] = e.target.checked; save(); render(true); return; }
+  if (b === "pdMonth") { S.pdMonth = e.target.value === "" ? null : +e.target.value; render(true); return; }
+  if (b === "month") S.month = +e.target.value;
+  else if (b === "incl") { S.incl[e.target.dataset.id] = e.target.checked; save(); }
+  else if (b === "fxp") S.fx.p = e.target.value;
+  else if (b === "fxm") S.fx.m = +e.target.value;
+  render(true);
+});
+$("#importFile").addEventListener("change", (e) => {
+  const f = e.target.files[0]; if (!f) return;
+  const rd = new FileReader();
+  rd.onload = () => { try { applyPayload(JSON.parse(rd.result)); applyTheme(); save(); render(true); toast("Données importées"); } catch (err) { toast("Import impossible : " + err.message); } };
+  rd.readAsText(f); e.target.value = "";
+});
+$("#dlg").addEventListener("keydown", (e) => { if (e.key === "Enter" && e.target.tagName === "INPUT") { e.preventDefault(); const b = $("#dlg [data-action=\"save-dlg\"]"); if (b) b.click(); } });
+$("#dlg").addEventListener("cancel", (e) => {
+  if (dlgDirty()) {
+    e.preventDefault();
+    if (window.confirm("Fermer sans enregistrer les modifications ?")) { dlgInitial = null; const d = $("#dlg"); if (d.close) d.close(); else d.removeAttribute("open"); }
+  }
+});
+window.addEventListener("beforeunload", (e) => {
+  if ($("#dlg").hasAttribute("open") && dlgDirty()) { e.preventDefault(); e.returnValue = ""; }
+});
+window.addEventListener("hashchange", () => render(false));
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && document.body.classList.contains("presenting")) document.body.classList.remove("presenting"); });
+
+let lastKey = "";
+function render(keepScroll) {
+  const r = route();
+  charts.length = 0; tipEl.hidden = true;
+  renderSide(r);
+  const view = r.name === "personne" ? viewPerson(r.id) : r.name === "equipe" ? viewTeam() : r.name === "formules" ? viewFormulas() : r.name === "rapport" ? viewReport() : r.name === "bilan" ? viewBilan(r.id) : r.name === "reglages" ? viewSettings() : viewDashboard();
+  const y = window.scrollY;
+  $("#main").innerHTML = view.html;
+  view.after();
+  const key = r.name + (r.id || "");
+  if (!keepScroll || key !== lastKey) window.scrollTo(0, 0); else window.scrollTo(0, y);
+  lastKey = key;
+  document.title = (r.name === "personne" ? r.id : r.name === "bilan" ? "Bilan de " + r.id : { dashboard:"Tableau de bord", equipe:"Équipe", formules:"Formules", rapport:"Rapport", reglages:"Réglages" }[r.name]) + " · Productivité EASY " + String(S.year).slice(2);
+}
+S.month = lastDataMonth(); S.fx.m = S.month;
+render(false);
+window.__app = { book, S, pm, vol, cadence, refAvg, render, PEOPLE, YEARS, switchYear, addYear, workingDays, projData, prevCtx };
+})();
+</script>
+</body>
+</html>
